@@ -1,59 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ⚽ Sokol Čáča — Správa sportovního týmu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Webová aplikace pro správu tréninků, zápasů a docházky hráčů fotbalového oddílu. Postavena na Laravel 12, Blade šablonách a Tailwind CSS.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Co aplikace umí
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Tréninky** — plánování tréninků, přehled nadcházejících termínů, mazání
+- **Zápasy** — správa zápasů včetně soupeře, místa a výsledku
+- **Hlasování o docházce** — každý hráč potvrdí účast (Budu / Nebudu) u každého tréninku a zápasu
+- **Dashboard hráče** — přehled vlastní docházky seskupený po měsících, oddělená statistika pro tréninky a zápasy (byl/celkem, %)
+- **Dashboard trenéra** — globální tabulka všech hráčů po měsících, rozbalovací detail docházky každého hráče na konkrétní akce
+- **Role** — hráč vidí svá data, trenér (admin) vidí vše a může přidávat/mazat akce
+- **Registrace a přihlášení** — standardní autentizace s e-mailem a heslem
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🎓 Kontext projektu
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Aplikace vznikla jako nástroj pro reálné použití v místním fotbalovém oddílu. Cílem bylo nahradit chaotické sdílení informací přes zprávy a skupinové chaty něčím přehledným, kde trenér vidí kdo přijde a hráči vidí svou vlastní docházku.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Záměrně je to jednoduché — žádný zbytečně složitý systém, jen to co oddíl skutečně potřebuje. Do budoucna počítám s rozšiřováním podle toho, co bude v praxi chybět.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠 Použité technologie
 
-### Premium Partners
+| Vrstva | Technologie |
+|--------|------------|
+| Backend framework | Laravel 12 (PHP 8.2+) |
+| Šablony | Blade |
+| CSS framework | Tailwind CSS v3 |
+| Interaktivita | Alpine.js |
+| Databáze | MySQL |
+| Sestavení frontendu | Vite |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 📁 Struktura projektu
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── DashboardController.php   # Dashboardy hráče i trenéra
+│   │   ├── TrainingController.php    # Přehled a mazání tréninků
+│   │   ├── GameController.php        # Přehled, vytváření a mazání zápasů
+│   │   ├── AttendanceController.php  # Ukládání hlasování o docházce
+│   │   ├── ProfileController.php     # Správa profilu uživatele
+│   │   └── Admin/
+│   │       └── TrainingController.php  # Vytváření tréninků (pouze admin)
+│   └── Middleware/
+│       └── AdminMiddleware.php       # Ochrana admin tras
+├── Models/
+│   ├── User.php       # Uživatel s relacemi na tréninky a zápasy
+│   ├── Training.php   # Model tréninku
+│   └── Game.php       # Model zápasu
+resources/views/
+├── dashboard.blade.php          # Dashboard (hráč i trenér)
+├── trainings/index.blade.php    # Přehled tréninků s hlasováním
+├── games/index.blade.php        # Přehled zápasů s hlasováním
+├── admin/trainings/create.blade.php
+├── games/create.blade.php
+├── profile/
+└── layouts/
+    ├── app.blade.php
+    ├── guest.blade.php
+    └── navigation.blade.php
+routes/
+├── web.php
+└── auth.php
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🗄 Datový model
 
-## Security Vulnerabilities
+### `users` — uživatelé
+| Pole | Typ | Popis |
+|------|-----|-------|
+| id | int | Identifikátor |
+| name | string | Jméno |
+| email | string | E-mail (unikátní) |
+| password | string | Hashované heslo |
+| role | string | `player` / `admin` |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### `trainings` — tréninky
+| Pole | Typ | Popis |
+|------|-----|-------|
+| id | int | Identifikátor |
+| training_date | datetime | Datum a čas tréninku |
+| location | string | Místo konání |
+| description | string | Volitelný popis |
 
-## License
+### `games` — zápasy
+| Pole | Typ | Popis |
+|------|-----|-------|
+| id | int | Identifikátor |
+| match_type_id | int | Cizí klíč → `game_types` |
+| home_team | string | Domácí tým |
+| away_team | string | Hostující tým |
+| game_date | datetime | Datum a čas zápasu |
+| location | string | Místo konání |
+| result | string | Výsledek (volitelný) |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### `training_attendance` — docházka na tréninky
+| Pole | Typ | Popis |
+|------|-----|-------|
+| id | int | Identifikátor |
+| user_id | int | Cizí klíč → `users` |
+| training_id | int | Cizí klíč → `trainings` |
+| status_id | int | `1` = budu, `2` = nebudu |
+| note | string | Důvod absence (volitelný) |
+
+### `game_attendance` — docházka na zápasy
+Stejná struktura jako `training_attendance`, pouze s `game_id` místo `training_id`.
+
+---
+
+## 🚀 Instalace a spuštění
+
+**Požadavky:** PHP 8.2+, Composer, Node.js 18+, MySQL
+
+```bash
+# 1. Stažení projektu
+git clone https://github.com/...
+
+# 2. Instalace PHP závislostí
+composer install
+
+# 3. Instalace JS závislostí
+npm install
+
+# 4. Konfigurace prostředí
+cp .env.example .env
+php artisan key:generate
+
+# 5. Nastavení databáze v .env
+DB_DATABASE=sokol_caca
+DB_USERNAME=root
+DB_PASSWORD=
+
+# 6. Spuštění migrací
+php artisan migrate
+
+# 7. Sestavení frontendu
+npm run dev
+
+# nebo pro produkci
+npm run build
+```
+
+---
+
+## 👤 Autor
+
+Developed by Martin Hábl.
