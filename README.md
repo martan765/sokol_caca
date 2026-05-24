@@ -1,4 +1,4 @@
-# ⚽ Sokol Čáča — Správa sportovního týmu
+# ⚽ Sokol Čača — Správa sportovního týmu
 
 Webová aplikace pro správu tréninků, zápasů a docházky hráčů fotbalového oddílu. Postavena na Laravel 12, Blade šablonách a Tailwind CSS.
 
