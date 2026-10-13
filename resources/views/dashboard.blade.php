@@ -12,17 +12,13 @@
     <div class="py-8 px-4">
         <div class="max-w-7xl mx-auto">
 
-            {{-- ========================================
-                 HRÁČ: není propojen s profilem
-            ========================================= --}}
+        <!--hráč není propojen s profilem hráče-->
             @if(!$isAdmin && ($noPlayer ?? false))
                 <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-yellow-800 font-medium">
                     Tvůj účet není propojen s profilem hráče. Kontaktuj trenéra.
                 </div>
 
-            {{-- ========================================
-                 DASHBOARD HRÁČE
-            ========================================= --}}
+            <!-- dashboard hráče -->
             @elseif(!$isAdmin)
                 @if($grouped->isEmpty())
                     <div class="text-center py-16 text-gray-400 italic bg-white rounded-xl border border-gray-200">
@@ -41,7 +37,6 @@
 
                         <div x-data="{ open: true }" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
-                            {{-- Měsíční hlavička --}}
                             <button @click="open = !open"
                                     class="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors text-left">
                                 <div class="flex items-center flex-wrap gap-3">
@@ -70,7 +65,6 @@
                                 </svg>
                             </button>
 
-                            {{-- Detail tabulka --}}
                             <div x-show="open" x-transition>
                                 <div class="overflow-x-auto border-t border-gray-100">
                                     <table class="w-full text-sm">
@@ -137,7 +131,6 @@
                                     </table>
                                 </div>
 
-                                {{-- Spodní souhrn --}}
                                 <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex flex-wrap items-center gap-6 text-sm">
                                     @if($stats['trainings']['total'] > 0)
                                         <div class="flex items-center gap-2">
@@ -161,9 +154,7 @@
                     @endforeach
                 @endif
 
-            {{-- ========================================
-                 DASHBOARD TRENÉRA (ADMIN)
-            ========================================= --}}
+            <!-- dashboard admin -->
             @else
                 @if($months->isEmpty())
                     <div class="text-center py-16 text-gray-400 italic bg-white rounded-xl border border-gray-200">
@@ -206,7 +197,6 @@
                                         @endphp
 
                                         <tbody x-data="{ open: false }">
-                                            {{-- Souhrnný řádek hráče --}}
                                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                                 <td class="px-4 py-3 font-semibold text-gray-800">{{ $playerName }}</td>
                                                 <td class="px-4 py-3 text-center text-gray-600">
@@ -258,7 +248,6 @@
                                                 </td>
                                             </tr>
 
-                                            {{-- Detail řádek (rozbalitelný) --}}
                                             <tr x-show="open" x-transition>
                                                 <td colspan="6" class="p-0 bg-gray-50 border-b border-gray-200">
                                                     <div class="overflow-x-auto">

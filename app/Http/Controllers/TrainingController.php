@@ -21,7 +21,7 @@ class TrainingController extends Controller
         $user = $request->user();
 
         if (!$user || $user->role !== 'admin') {
-            abort(403, 'Nemáš právo mazat tréninky, brácho.');
+            abort(403, 'Nemáš právo mazat tréninky.');
         }
 
         $training->delete();

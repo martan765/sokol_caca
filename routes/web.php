@@ -6,7 +6,10 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
+
 use App\Http\Controllers\WeatherController;
+use App\Services\WeatherService;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +29,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
 
     Route::get('/weather', [WeatherController::class, 'index'])->name('weather.index');
+    Route::get('/test-pocasi', function (WeatherService $service) {
+    return response()->json($service->getWeather());
+});
 });
 
 Route::middleware(['auth'])->group(function () {

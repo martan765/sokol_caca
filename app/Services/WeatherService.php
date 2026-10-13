@@ -23,6 +23,7 @@ class WeatherService
             if ($response->successful()) {
                 return $response->json();
             }
+            
 
             return null;
         });
