@@ -6,6 +6,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/games', [GameController::class, 'index'])->name('games.index');
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+
+    Route::get('/weather', [WeatherController::class, 'index'])->name('weather.index');
 });
 
 Route::middleware(['auth'])->group(function () {
