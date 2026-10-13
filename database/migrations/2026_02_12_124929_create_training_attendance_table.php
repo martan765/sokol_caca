@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('training_attendance', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('training_id')->constrained()->onDelete('cascade');
-        $table->enum('status', ['attending', 'absent']);
-        $table->timestamps();
+        Schema::create('training_attendance', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('training_id');
+            $table->unsignedInteger('status_id');
+            $table->text('note')->nullable();
 
-        $table->unique(['user_id', 'training_id']);
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('training_id')->references('id')->on('trainings')->cascadeOnDelete();
+            $table->foreign('status_id')->references('id')->on('attendance_statuses');
         });
     }
 
