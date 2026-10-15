@@ -27,6 +27,15 @@
                 </header>
             @endisset
 
+            <!-- Flash Messages -->
+            @foreach(['success' => 'bg-green-100 text-green-700 border-green-200', 'error' => 'bg-red-100 text-red-700 border-red-200'] as $type => $classes)
+                @if(session($type))
+                    <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+                        <div class="p-4 rounded-lg border {{ $classes }}">{{ session($type) }}</div>
+                    </div>
+                @endif
+            @endforeach
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}

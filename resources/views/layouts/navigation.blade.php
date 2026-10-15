@@ -1,3 +1,22 @@
+@php
+    $navLinks = [
+        'dashboard'       => __('Dashboard'),
+        'trainings.index' => __('Tréninky'),
+        'games.index'     => __('Zápasy'),
+        'weather.index'   => __('Počasí'),
+    ];
+
+    // Area "Admin" – klíč je route sekce, aktivní je pro všechny její stránky (admin.trainings.*)
+    $adminLinks = Auth::user()->isAdmin() ? [
+        'admin.trainings.index'           => __('Tréninky'),
+        'admin.games.index'               => __('Zápasy'),
+        'admin.users.index'               => __('Uživatelé'),
+        'admin.game-types.index'          => __('Typy zápasů'),
+        'admin.attendance-statuses.index' => __('Stavy účasti'),
+    ] : [];
+    $sectionOf = fn (string $route) => Str::beforeLast($route, '.') . '.*';
+@endphp
+
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,43 +31,36 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @foreach($navLinks as $route => $label)
+                        <x-nav-link :href="route($route)" :active="request()->routeIs($route)">
+                            {{ $label }}
+                        </x-nav-link>
+                    @endforeach
+
+                    @if($adminLinks)
+                        <div class="flex items-center">
+                            <x-dropdown align="left" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center h-16 px-1 pt-1 border-b-2 text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out {{ request()->routeIs('admin.*') ? 'border-brand-400 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                                        {{ __('Administrace') }}
+                                        <svg class="ms-1 fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </x-slot>
+
+                                <x-slot name="content">
+                                    @foreach($adminLinks as $route => $label)
+                                        <x-dropdown-link :href="route($route)" :class="request()->routeIs($sectionOf($route)) ? 'font-semibold text-brand-700' : ''">
+                                            {{ $label }}
+                                        </x-dropdown-link>
+                                    @endforeach
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
                 </div>
-                @if(Auth::user()->role === 'admin')
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('admin.trainings.create')" :active="request()->routeIs('admin.trainings.create')">
-                            {{ __('Vytvořit trénink') }}
-                        </x-nav-link>
-                    </div>
-
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('admin.games.create')" :active="request()->routeIs('games.create')">
-                            {{ __('Vytvořit zápas') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
-                            {{ __('Tréninky') }}
-                        </x-nav-link>
-                    </div>
-
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('games.index')" :active="request()->routeIs('games.index')">
-                            {{ __('Zápasy') }}
-                        </x-nav-link>
-                    </div>
-
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('weather.index')" :active="request()->routeIs('weather.index')">
-                            {{ __('Počasí') }}
-                        </x-nav-link>
-                    </div>
-                </div>
-
-
+            </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -99,10 +111,23 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            @foreach($navLinks as $route => $label)
+                <x-responsive-nav-link :href="route($route)" :active="request()->routeIs($route)">
+                    {{ $label }}
+                </x-responsive-nav-link>
+            @endforeach
         </div>
+
+        @if($adminLinks)
+            <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
+                <div class="px-4 pt-2 text-xs font-bold text-gray-400 uppercase tracking-widest">{{ __('Administrace') }}</div>
+                @foreach($adminLinks as $route => $label)
+                    <x-responsive-nav-link :href="route($route)" :active="request()->routeIs($sectionOf($route))">
+                        {{ $label }}
+                    </x-responsive-nav-link>
+                @endforeach
+            </div>
+        @endif
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
