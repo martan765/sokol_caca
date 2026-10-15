@@ -11,9 +11,17 @@ class Training extends Model
 
     protected $fillable = ['training_date', 'location', 'description'];
 
+    protected function casts(): array
+    {
+        return [
+            'training_date' => 'datetime',
+        ];
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'training_attendance', 'training_id', 'user_id')
-                    ->withPivot('status_id', 'note');
+                    ->using(TrainingAttendance::class)
+                    ->withPivot('id', 'status_id', 'note');
     }
 }

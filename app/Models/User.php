@@ -11,6 +11,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const ROLE_ADMIN  = 'admin';
+    public const ROLE_PLAYER = 'player';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -32,15 +35,22 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
     public function trainings(): BelongsToMany
     {
         return $this->belongsToMany(Training::class, 'training_attendance', 'user_id', 'training_id')
-                    ->withPivot('status_id', 'note');
+                    ->using(TrainingAttendance::class)
+                    ->withPivot('id', 'status_id', 'note');
     }
 
     public function games(): BelongsToMany
     {
         return $this->belongsToMany(Game::class, 'game_attendance', 'user_id', 'game_id')
-                    ->withPivot('status_id', 'note');
+                    ->using(GameAttendance::class)
+                    ->withPivot('id', 'status_id', 'note');
     }
 }
