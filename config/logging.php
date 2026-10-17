@@ -73,6 +73,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Audit změn v administraci (kdo co vytvořil / upravil / smazal), soubor na každý den
+        'admin' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/admin.log'),
+            'level' => 'info',
+            'days' => 90,
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
