@@ -11,104 +11,51 @@
     <div class="py-12 px-4">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             @forelse($games as $game)
-                @php
-    $currentUser    = auth()->user();
-    $userAttendance = $game->users->where('id', $currentUser->id)->first();
-    $currentStatus  = $userAttendance ? $userAttendance->pivot->status_id : null;
-@endphp
+                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 border-t-4 border-t-gray-800 flex flex-col">
 
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 flex flex-col relative">
-                    <div class="p-5 border-b border-gray-100 bg-gray-50/50">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="text-xs font-bold text-black-600 uppercase tracking-wider">
-                                    {{ \Carbon\Carbon::parse($game->game_date)->locale('cs')->translatedFormat('l d.m.Y') }}
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <x-date-tile :date="$game->game_date" />
+
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $game->game_date->format('H:i') }}</span>
+                                    <x-countdown :date="$game->game_date" />
+                                    @if($game->isHome())
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-200">Doma</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-white text-gray-600 ring-1 ring-inset ring-gray-300">Venku</span>
+                                    @endif
                                 </div>
-                                <div class="text-xl font-black text-gray-900">{{ \Carbon\Carbon::parse($game->game_date)->format('H:i') }}</div>
+
+                                <div class="mt-2 text-base font-bold text-gray-800">
+                                    @foreach([$game->home_team, $game->away_team] as $team)
+                                        <span @class(['text-brand-700' => $game->isOurTeam($team)])>{{ $team }}</span>
+                                        @if($loop->first) <span class="text-gray-400 font-normal mx-1">vs</span> @endif
+                                    @endforeach
+                                </div>
+
+                                <div class="mt-1 flex items-center gap-1.5 text-sm text-gray-500">
+                                    @if($game->location)
+                                        <svg class="w-4 h-4 shrink-0 text-gray-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span class="truncate">{{ $game->location }}</span>
+                                    @endif
+                                    @if($game->type)
+                                        <span class="text-gray-300">·</span>
+                                        <span class="truncate">{{ $game->type->name }}</span>
+                                    @endif
+                                </div>
                             </div>
 
-                            <div class="flex flex-col items-end text-right pl-4">
-                                @if(auth()->user() && auth()->user()->role === 'admin')
-                                    <div class="mb-1">
-                                        <form action="{{ route('games.destroy', $game) }}" method="POST" onsubmit="return confirm('Opravdu chceš SMAZAT tento zápas?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-1.5 bg-white text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-full border border-gray-100 hover:border-red-100 transition-all duration-200 shadow-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-red-500">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endif
-                                <span class="text-lg font-bold text-gray-800 leading-tight">{{ $game->location }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-5">
-                        <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Tvoje účast</div>
-
-                        <div class="mb-6">
-                            <form action="{{ route('attendance.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="game_id" value="{{ $game->id }}">
-                                <input type="hidden" name="status" value="1">
-                                <button type="submit" class="w-full flex items-center justify-between p-3 rounded-lg transition {{ $currentStatus == 1 ? 'bg-green-50' : 'hover:bg-gray-50' }}">
-                                    <div class="flex items-center">
-                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center {{ $currentStatus == 1 ? 'border-green-500 bg-green-500' : 'border-gray-300' }}">
-                                            @if($currentStatus == 1) <div class="w-2 h-2 bg-white rounded-full"></div> @endif
-                                        </div>
-                                        <span class="ml-3 font-semibold {{ $currentStatus == 1 ? 'text-green-600' : 'text-gray-700' }}">Budu</span>
-                                    </div>
-                                    <span class="font-bold text-green-600">{{ $game->users->where('pivot.status_id', 1)->count() }}</span>
-                                </button>
-                            </form>
-
-                            @if($game->users->where('pivot.status_id', 1)->count() > 0)
-                                <details class="px-3 mt-2">
-                                    <summary class="text-[10px] font-bold text-gray-400 cursor-pointer hover:text-green-500 transition">Zobrazit jména</summary>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        @foreach($game->users->where('pivot.status_id', 1) as $p)
-                                            <span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold border border-green-200">
-                                                {{ $p->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </details>
-                            @endif
-                        </div>
-
-                        <div>
-                            <form action="{{ route('attendance.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="game_id" value="{{ $game->id }}">
-                                <input type="hidden" name="status" value="2">
-                                <button type="submit" class="w-full flex items-center justify-between p-3 rounded-lg transition {{ $currentStatus == 2 ? 'bg-red-50' : 'hover:bg-gray-50' }}">
-                                    <div class="flex items-center">
-                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center {{ $currentStatus == 2 ? 'border-red-500 bg-red-500' : 'border-gray-300' }}">
-                                            @if($currentStatus == 2) <div class="w-2 h-2 bg-white rounded-full"></div> @endif
-                                        </div>
-                                        <span class="ml-3 font-semibold {{ $currentStatus == 2 ? 'text-red-600' : 'text-gray-700' }}">Nebudu</span>
-                                    </div>
-                                    <span class="font-bold text-red-600">{{ $game->users->where('pivot.status_id', 2)->count() }}</span>
-                                </button>
-                            </form>
-
-                            @if($game->users->where('pivot.status_id', 2)->count() > 0)
-                                <details class="px-3 mt-2">
-                                    <summary class="text-[10px] font-bold text-gray-400 cursor-pointer hover:text-green-500 transition">Zobrazit jména</summary>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        @foreach($game->users->where('pivot.status_id', 2) as $p)
-                                            <span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold border border-green-200">
-                                                {{ $p->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </details>
+                            @if(auth()->user()->isAdmin())
+                                <x-edit-link :href="route('admin.games.edit', $game)" />
                             @endif
                         </div>
                     </div>
+
+                    <x-attendance-vote :users="$game->users" field="game_id" :event-id="$game->id" :statuses="$statuses" />
                 </div>
             @empty
                 <div class="col-span-full text-center py-10 text-gray-400 italic bg-white rounded-xl border">Žádné zápasy.</div>
