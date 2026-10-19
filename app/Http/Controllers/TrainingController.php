@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Training;
-use Illuminate\Http\Request;
+use App\Services\AttendanceService;
+use App\Services\TrainingService;
 
+/**
+ * Veřejný přehled nadcházejících tréninků s hlasováním o účasti.
+ * Správa tréninků je v Admin\TrainingController.
+ */
 class TrainingController extends Controller
 {
+    public function __construct(
+        private readonly TrainingService $trainings,
+        private readonly AttendanceService $attendance,
+    ) {}
+
     public function index()
     {
-        $trainings = Training::where('training_date', '>=', now())
-            ->orderBy('training_date', 'asc')
-            ->get();
+        $trainings = $this->trainings->upcoming();
+        $statuses  = $this->attendance->statuses();
 
-        return view('trainings.index', compact('trainings'));
-    }
-
-    public function destroy(Request $request, Training $training)
-    {
-        $user = $request->user();
-
-        if (!$user || $user->role !== 'admin') {
-            abort(403, 'Nemáš právo mazat tréninky.');
-        }
-
-        $training->delete();
-
-        return redirect()->route('dashboard')->with('success', 'Trénink byl úspěšně zrušen.');
+        return view('trainings.index', compact('trainings', 'statuses'));
     }
 }

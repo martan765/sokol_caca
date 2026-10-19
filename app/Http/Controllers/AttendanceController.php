@@ -2,31 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreAttendanceRequest;
+use App\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(
+        private readonly AttendanceService $attendance,
+    ) {}
+
+    public function store(StoreAttendanceRequest $request)
     {
-        $request->validate([
-            'status' => 'required|integer',
-            'training_id' => 'nullable|exists:trainings,id',
-            'game_id' => 'nullable|exists:games,id',
-        ]);
+        $this->attendance->vote($request->user(), $request->validated());
 
-        $user = $request->user();
-
-        if ($request->filled('training_id')) {
-            $user->trainings()->syncWithoutDetaching([
-                $request->training_id => ['status_id' => $request->status]
-            ]);
-            $eventType = 'trénink';
-        } elseif ($request->filled('game_id')) {
-            $user->games()->syncWithoutDetaching([
-                $request->game_id => ['status_id' => $request->status]
-            ]);
-            $eventType = 'zápas';
-        }
+        $eventType = $request->isTrainingVote() ? 'trénink' : 'zápas';
 
         return back()->with('success', "Účast na {$eventType} byla uložena!");
     }
