@@ -141,8 +141,9 @@ DB_DATABASE=sokol_caca
 DB_USERNAME=root
 DB_PASSWORD=
 
-# 6. Spuštění migrací
-php artisan migrate
+# 6. Vytvoření databáze (Code-First migrace) + ukázková data
+php artisan migrate --seed
+# přihlášení: admin@admin.cz / password (hráči např. novak@caca.cz / password)
 
 # 7. Sestavení frontendu
 npm run dev
@@ -155,4 +156,4 @@ npm run build
 
 ## 👤 Autor
 
-Developed by Martin Hábl.
+Developed by idk.
