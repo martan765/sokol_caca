@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Models;
+namespace Sokol\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class GameType extends Model
+class GameTypeModel extends Model
 {
+    protected $table = 'game_types';
+
     public $timestamps = false;
 
     protected $fillable = ['name'];
 
     public function games(): HasMany
     {
-        return $this->hasMany(Game::class, 'match_type_id');
+        return $this->hasMany(GameModel::class, 'match_type_id');
     }
 }

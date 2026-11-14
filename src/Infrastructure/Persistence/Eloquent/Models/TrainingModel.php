@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace Sokol\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Training extends Model
+class TrainingModel extends Model
 {
+    protected $table = 'trainings';
+
     public $timestamps = false;
 
     protected $fillable = ['training_date', 'location', 'description'];
@@ -20,8 +22,8 @@ class Training extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'training_attendance', 'training_id', 'user_id')
-                    ->using(TrainingAttendance::class)
+        return $this->belongsToMany(UserModel::class, 'training_attendance', 'training_id', 'user_id')
+                    ->using(TrainingAttendanceModel::class)
                     ->withPivot('id', 'status_id', 'note');
     }
 }

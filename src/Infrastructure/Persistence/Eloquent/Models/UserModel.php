@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace Sokol\Infrastructure\Persistence\Eloquent\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable
+class UserModel extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    public const ROLE_ADMIN  = 'admin';
-    public const ROLE_PLAYER = 'player';
+    protected $table = 'users';
 
     public $timestamps = false;
 
@@ -35,22 +33,17 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool
-    {
-        return $this->role === self::ROLE_ADMIN;
-    }
-
     public function trainings(): BelongsToMany
     {
-        return $this->belongsToMany(Training::class, 'training_attendance', 'user_id', 'training_id')
-                    ->using(TrainingAttendance::class)
+        return $this->belongsToMany(TrainingModel::class, 'training_attendance', 'user_id', 'training_id')
+                    ->using(TrainingAttendanceModel::class)
                     ->withPivot('id', 'status_id', 'note');
     }
 
     public function games(): BelongsToMany
     {
-        return $this->belongsToMany(Game::class, 'game_attendance', 'user_id', 'game_id')
-                    ->using(GameAttendance::class)
+        return $this->belongsToMany(GameModel::class, 'game_attendance', 'user_id', 'game_id')
+                    ->using(GameAttendanceModel::class)
                     ->withPivot('id', 'status_id', 'note');
     }
 }

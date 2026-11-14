@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace Sokol\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-/**
- * Účast hráče na tréninku (pivot mezi users a trainings).
- */
-class TrainingAttendance extends Pivot
+class TrainingAttendanceModel extends Pivot
 {
     protected $table = 'training_attendance';
 
@@ -18,6 +15,6 @@ class TrainingAttendance extends Pivot
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(AttendanceStatus::class, 'status_id');
+        return $this->belongsTo(AttendanceStatusModel::class, 'status_id');
     }
 }
