@@ -1,0 +1,58 @@
+deptrac:
+  paths:
+    - ./app
+    - ./src
+
+  exclude_files:
+    - '#.*[\\/]Database[\\/]Migrations[\\/].*#'
+
+  analyser:
+    types:
+      - class
+      - class_superglobal
+      - use
+      - file
+      - function
+      - function_call
+
+  layers:
+    - name: Domain
+      collectors:
+        - type: classLike
+          value: ^Sokol\\Domain\\.*
+
+    - name: Application
+      collectors:
+        - type: classLike
+          value: ^Sokol\\Application\\.*
+
+    - name: Infrastructure
+      collectors:
+        - type: classLike
+          value: ^Sokol\\Infrastructure\\.*
+
+    - name: Presentation
+      collectors:
+        - type: classLike
+          value: ^App\\.*
+
+    - name: Framework
+      collectors:
+        - type: classLike
+          value: ^(Illuminate|Laravel|Carbon|Symfony|Psr|GuzzleHttp|Monolog)\\.*
+        - type: functionName
+          value: ^(__|abort|abort_if|abort_unless|app|auth|back|base_path|bcrypt|cache|collect|config|cookie|csrf_token|data_get|data_set|database_path|dispatch|env|event|fake|info|logger|now|old|optional|redirect|report|request|rescue|resolve|response|retry|route|session|storage_path|tap|today|trans|url|validator|value|view)$
+
+  ruleset:
+    Domain: ~
+    Application:
+      - Domain
+    Infrastructure:
+      - Application
+      - Domain
+      - Framework
+    Presentation:
+      - Application
+      - Domain
+      - Framework
+    Framework: ~
