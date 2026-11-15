@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AttendanceSheetRequest;
 use App\Http\Requests\Admin\GameRequest;
-use App\Models\Game;
-use App\Services\AttendanceService;
-use App\Services\GameService;
+use App\Http\Support\Paging;
 use Psr\Log\LoggerInterface;
+use Sokol\Application\Services\AttendanceService;
+use Sokol\Application\Services\GameService;
+use Sokol\Domain\Enums\EventType;
 
 class GameController extends Controller
 {
@@ -20,7 +21,7 @@ class GameController extends Controller
 
     public function index()
     {
-        $games = $this->games->paginated();
+        $games = Paging::toPaginator($this->games->paginated(Paging::currentPage()));
 
         return view('admin.games.index', compact('games'));
     }
@@ -34,34 +35,35 @@ class GameController extends Controller
 
     public function store(GameRequest $request)
     {
-        $game = $this->games->schedule($request->validated());
+        $game = $this->games->schedule($request->toData());
 
-        $this->logger->info('Zápas vytvořen', ['game_id' => $game->id, 'match' => "{$game->home_team} vs {$game->away_team}"]);
+        $this->logger->info('Zápas vytvořen', ['game_id' => $game->id, 'match' => $game->label]);
 
         return redirect()->route('admin.games.index')->with('success', 'Zápas byl úspěšně přidán!');
     }
 
-    public function edit(Game $game)
+    public function edit(int $game)
     {
-        $gameTypes = $this->games->types();
-
-        return view('admin.games.edit', compact('game', 'gameTypes'));
+        return view('admin.games.edit', [
+            'game'      => $this->games->get($game),
+            'gameTypes' => $this->games->types(),
+        ]);
     }
 
-    public function update(GameRequest $request, Game $game)
+    public function update(GameRequest $request, int $game)
     {
-        $this->games->update($game, $request->validated());
+        $changes = $this->games->update($game, $request->toData());
 
-        $this->logger->info('Zápas upraven', ['game_id' => $game->id, 'changes' => $game->getChanges()]);
+        $this->logger->info('Zápas upraven', ['game_id' => $game, 'changes' => $changes]);
 
         return redirect()->route('admin.games.index')->with('success', 'Zápas byl upraven.');
     }
 
-    public function destroy(Game $game)
+    public function destroy(int $game)
     {
-        $this->games->cancel($game);
+        $cancelled = $this->games->cancel($game);
 
-        $this->logger->info('Zápas smazán', ['game_id' => $game->id, 'match' => "{$game->home_team} vs {$game->away_team}"]);
+        $this->logger->info('Zápas smazán', ['game_id' => $cancelled->id, 'match' => $cancelled->label]);
 
         return redirect()->route('admin.games.index')->with('success', 'Zápas byl zrušen.');
     }
@@ -69,21 +71,26 @@ class GameController extends Controller
     /**
      * Trenér zapisuje docházku za hráče (např. když se omluví telefonem).
      */
-    public function attendance(Game $game)
+    public function attendance(int $game)
     {
-        return view('admin.attendance.edit', $this->attendance->gameSheet($game) + [
-            'heading' => "Docházka – {$game->home_team} vs {$game->away_team}",
-            'date'    => $game->game_date,
-            'action'  => route('admin.games.attendance.update', $game),
-            'back'    => route('admin.games.index'),
+        $sheet = $this->attendance->sheet(EventType::Game, $game);
+
+        return view('admin.attendance.edit', [
+            'players'  => $sheet->players,
+            'current'  => $sheet->current,
+            'statuses' => $sheet->statuses,
+            'heading'  => "Docházka – {$sheet->eventLabel}",
+            'date'     => $sheet->eventDate,
+            'action'   => route('admin.games.attendance.update', $game),
+            'back'     => route('admin.games.index'),
         ]);
     }
 
-    public function updateAttendance(AttendanceSheetRequest $request, Game $game)
+    public function updateAttendance(AttendanceSheetRequest $request, int $game)
     {
-        $this->attendance->saveGameSheet($game, $request->validated('attendance', []));
+        $this->attendance->saveSheet(EventType::Game, $game, $request->rows());
 
-        $this->logger->info('Docházka zápasu upravena trenérem', ['game_id' => $game->id]);
+        $this->logger->info('Docházka zápasu upravena trenérem', ['game_id' => $game]);
 
         return redirect()->route('admin.games.index')->with('success', 'Docházka byla uložena.');
     }

@@ -27,15 +27,15 @@
                                 <tr>
                                     <td class="px-4 py-3 font-medium">{{ $status->name }}</td>
                                     <td class="px-4 py-3">
-                                        @if($status->id == \App\Models\AttendanceStatus::ATTENDING)
+                                        @if($status->isAttending)
                                             <span class="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs font-bold">Hráč přijde</span>
-                                        @elseif($status->id == \App\Models\AttendanceStatus::NOT_ATTENDING)
+                                        @elseif($status->isNotAttending)
                                             <span class="px-2 py-0.5 rounded bg-red-100 text-red-700 text-xs font-bold">Hráč nepřijde</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex justify-end">
-                                            <x-edit-link :href="route('admin.attendance-statuses.edit', $status)" />
+                                            <x-edit-link :href="route('admin.attendance-statuses.edit', $status->id)" />
                                         </div>
                                     </td>
                                 </tr>

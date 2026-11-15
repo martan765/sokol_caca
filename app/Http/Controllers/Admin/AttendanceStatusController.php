@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AttendanceStatusRequest;
-use App\Models\AttendanceStatus;
-use App\Services\AttendanceService;
 use Psr\Log\LoggerInterface;
+use Sokol\Application\Services\AttendanceService;
 
 /**
  * Stavy účasti jsou systémový číselník – lze je jen přejmenovat.
@@ -25,16 +24,16 @@ class AttendanceStatusController extends Controller
         return view('admin.attendance-statuses.index', compact('statuses'));
     }
 
-    public function edit(AttendanceStatus $attendanceStatus)
+    public function edit(int $attendanceStatus)
     {
-        return view('admin.attendance-statuses.edit', ['status' => $attendanceStatus]);
+        return view('admin.attendance-statuses.edit', ['status' => $this->attendance->getStatus($attendanceStatus)]);
     }
 
-    public function update(AttendanceStatusRequest $request, AttendanceStatus $attendanceStatus)
+    public function update(AttendanceStatusRequest $request, int $attendanceStatus)
     {
-        $this->attendance->renameStatus($attendanceStatus, $request->validated());
+        $changes = $this->attendance->renameStatus($attendanceStatus, $request->validated('name'));
 
-        $this->logger->info('Stav účasti přejmenován', ['status_id' => $attendanceStatus->id, 'changes' => $attendanceStatus->getChanges()]);
+        $this->logger->info('Stav účasti přejmenován', ['status_id' => $attendanceStatus, 'changes' => $changes]);
 
         return redirect()->route('admin.attendance-statuses.index')->with('success', 'Stav účasti byl přejmenován.');
     }

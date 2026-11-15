@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AttendanceService;
-use App\Services\TrainingService;
+use Sokol\Application\Services\AttendanceService;
+use Sokol\Application\Services\TrainingService;
 
 /**
  * Veřejný přehled nadcházejících tréninků s hlasováním o účasti.
@@ -18,7 +18,7 @@ class TrainingController extends Controller
 
     public function index()
     {
-        $trainings = $this->trainings->upcoming();
+        $trainings = $this->trainings->upcoming($this->currentUserId());
         $statuses  = $this->attendance->statuses();
 
         return view('trainings.index', compact('trainings', 'statuses'));

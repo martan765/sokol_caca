@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Models\GameType;
+use App\Rules\UniqueGameTypeName;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Sokol\Application\Dto\GameTypeData;
 
 class GameTypeRequest extends FormRequest
 {
@@ -15,8 +15,15 @@ class GameTypeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('game_type');
+
         return [
-            'name' => ['required', 'string', 'max:50', Rule::unique(GameType::class)->ignore($this->route('game_type'))],
+            'name' => ['required', 'string', 'max:50', new UniqueGameTypeName($id === null ? null : (int) $id)],
         ];
+    }
+
+    public function toData(): GameTypeData
+    {
+        return new GameTypeData($this->validated('name'));
     }
 }

@@ -5,12 +5,13 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Sokol\Domain\Enums\Role;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
+    protected $model = UserModel::class;
+
     /**
      * The current password being used by the factory.
      */
@@ -29,7 +30,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role' => 'player',
+            'role' => Role::Player->value,
         ];
     }
 
@@ -48,6 +49,6 @@ class UserFactory extends Factory
      */
     public function admin(): static
     {
-        return $this->state(['role' => 'admin']);
+        return $this->state(['role' => Role::Admin->value]);
     }
 }

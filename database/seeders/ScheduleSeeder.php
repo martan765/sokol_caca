@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\AttendanceStatus;
-use App\Models\Game;
-use App\Models\GameType;
-use App\Models\Training;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Sokol\Domain\Enums\AttendanceStatusId;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\GameTypeModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
 /**
  * Jarní část sezóny 2026 (tréninky, mistrovské zápasy a docházka hráčů)
@@ -57,17 +57,17 @@ class ScheduleSeeder extends Seeder
 
     public function run(): void
     {
-        $this->userIds = User::pluck('id', 'email')->mapWithKeys(fn (int $id, string $email) => [Str::before($email, '@') => $id]);
+        $this->userIds = UserModel::pluck('id', 'email')->mapWithKeys(fn (int $id, string $email) => [Str::before($email, '@') => $id]);
 
-        $gameTypeId = GameType::firstOrCreate(['name' => 'Mistrovské utkání'])->id;
+        $gameTypeId = GameTypeModel::firstOrCreate(['name' => 'Mistrovské utkání'])->id;
 
         foreach (self::TRAININGS as [$date, $location, $attending, $notAttending]) {
-            $training = Training::create(['training_date' => $date, 'location' => $location]);
+            $training = TrainingModel::create(['training_date' => $date, 'location' => $location]);
             $this->attendance($training->users(), $attending, $notAttending);
         }
 
         foreach (self::GAMES as [$date, $home, $away, $location, $result, $attending, $notAttending]) {
-            $game = Game::create([
+            $game = GameModel::create([
                 'match_type_id' => $gameTypeId,
                 'game_date'     => $date,
                 'home_team'     => $home,
@@ -88,10 +88,10 @@ class ScheduleSeeder extends Seeder
     {
         $friday = now()->next('Friday');
 
-        Training::create(['training_date' => $friday->copy()->setTime(17, 30), 'location' => 'Hřiště Částkov', 'description' => 'Kondice + standardky']);
-        Training::create(['training_date' => $friday->copy()->addWeek()->setTime(17, 30), 'location' => 'Hřiště Částkov']);
+        TrainingModel::create(['training_date' => $friday->copy()->setTime(17, 30), 'location' => 'Hřiště Částkov', 'description' => 'Kondice + standardky']);
+        TrainingModel::create(['training_date' => $friday->copy()->addWeek()->setTime(17, 30), 'location' => 'Hřiště Částkov']);
 
-        Game::create([
+        GameModel::create([
             'match_type_id' => $gameTypeId,
             'game_date'     => $friday->copy()->addDays(2)->setTime(10, 15),
             'home_team'     => 'Částkov',
@@ -102,8 +102,8 @@ class ScheduleSeeder extends Seeder
 
     private function attendance(BelongsToMany $users, array $attending, array $notAttending): void
     {
-        $users->attach($this->ids($attending), ['status_id' => AttendanceStatus::ATTENDING]);
-        $users->attach($this->ids($notAttending), ['status_id' => AttendanceStatus::NOT_ATTENDING]);
+        $users->attach($this->ids($attending), ['status_id' => AttendanceStatusId::Attending->value]);
+        $users->attach($this->ids($notAttending), ['status_id' => AttendanceStatusId::NotAttending->value]);
     }
 
     private function ids(array $logins): array

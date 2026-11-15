@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendanceRequest;
-use App\Services\AttendanceService;
+use Sokol\Application\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
@@ -13,7 +13,7 @@ class AttendanceController extends Controller
 
     public function store(StoreAttendanceRequest $request)
     {
-        $this->attendance->vote($request->user(), $request->validated());
+        $this->attendance->vote($request->toData());
 
         $eventType = $request->isTrainingVote() ? 'trénink' : 'zápas';
 

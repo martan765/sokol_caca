@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Sokol\Domain\Enums\Role;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
 /**
  * Trenér a hráči kádru. Všichni mají heslo "password".
@@ -15,16 +16,16 @@ class UserSeeder extends Seeder
 
     /** login (část e-mailu před @) => [jméno, e-mail, role] */
     private const USERS = [
-        'admin'     => ['admin', 'admin@admin.cz', User::ROLE_ADMIN],
-        'novak'     => ['Petr Novák', 'novak@caca.cz', User::ROLE_PLAYER],
-        'kucera'    => ['Jaroslav Kučera', 'kucera@caca.cz', User::ROLE_PLAYER],
-        'dvorak'    => ['Martin Dvořák', 'dvorak@caca.cz', User::ROLE_PLAYER],
-        'svoboda'   => ['Michal Svoboda', 'svoboda@caca.cz', User::ROLE_PLAYER],
-        'marek'     => ['Tomáš Marek', 'marek@caca.cz', User::ROLE_PLAYER],
-        'benes'     => ['Pavel Beneš', 'benes@caca.cz', User::ROLE_PLAYER],
-        'cerny'     => ['Lukáš Černý', 'cerny@caca.cz', User::ROLE_PLAYER],
-        'prochazka' => ['Zdeněk Procházka', 'prochazka@caca.cz', User::ROLE_PLAYER],
-        'vesely'    => ['Jiří Veselý', 'vesely@caca.cz', User::ROLE_PLAYER],
+        'admin'     => ['admin', 'admin@admin.cz', Role::Admin],
+        'novak'     => ['Petr Novák', 'novak@caca.cz', Role::Player],
+        'kucera'    => ['Jaroslav Kučera', 'kucera@caca.cz', Role::Player],
+        'dvorak'    => ['Martin Dvořák', 'dvorak@caca.cz', Role::Player],
+        'svoboda'   => ['Michal Svoboda', 'svoboda@caca.cz', Role::Player],
+        'marek'     => ['Tomáš Marek', 'marek@caca.cz', Role::Player],
+        'benes'     => ['Pavel Beneš', 'benes@caca.cz', Role::Player],
+        'cerny'     => ['Lukáš Černý', 'cerny@caca.cz', Role::Player],
+        'prochazka' => ['Zdeněk Procházka', 'prochazka@caca.cz', Role::Player],
+        'vesely'    => ['Jiří Veselý', 'vesely@caca.cz', Role::Player],
     ];
 
     public function run(): void
@@ -33,11 +34,11 @@ class UserSeeder extends Seeder
 
         foreach (self::USERS as [$name, $email, $role]) {
             // role není ve $fillable (nesmí jít nastavit z registračního formuláře), proto forceFill
-            User::firstOrNew(['email' => $email])
+            UserModel::firstOrNew(['email' => $email])
                 ->forceFill([
                     'name'              => $name,
                     'password'          => $password,
-                    'role'              => $role,
+                    'role'              => $role->value,
                     'email_verified_at' => now(),
                 ])
                 ->save();

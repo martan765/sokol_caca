@@ -2,22 +2,24 @@
 
 namespace App\Rules;
 
-use App\Models\Game;
-use App\Models\Training;
-use App\Services\ScheduleService;
 use Closure;
+use DateTimeImmutable;
+use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Carbon;
+use Sokol\Application\Services\ScheduleService;
+use Sokol\Domain\Enums\EventType;
 
 /**
  * Tým nemůže mít dvě akce (trénink / zápas) naráz – mezi nimi musí být
- * alespoň ScheduleService::MIN_GAP_MINUTES minut.
+ * alespoň ScheduleRules::MIN_GAP_MINUTES minut.
  *
  * Pravidlo předpokládá platné datum, proto ho v rules() dávejte za 'bail' a 'date'.
  */
 class NoScheduleConflict implements ValidationRule
 {
-    private Training|Game|null $except = null;
+    private ?EventType $exceptType = null;
+
+    private ?int $exceptId = null;
 
     public function __construct(
         private readonly ScheduleService $schedule,
@@ -26,17 +28,24 @@ class NoScheduleConflict implements ValidationRule
     /**
      * Při úpravě akce se nemá kontrolovat kolize s ní samotnou.
      */
-    public function ignoring(Training|Game|null $event): static
+    public function ignoring(?int $eventId, EventType $type): static
     {
-        $this->except = $event;
+        $this->exceptId   = $eventId;
+        $this->exceptType = $eventId === null ? null : $type;
 
         return $this;
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($this->schedule->hasConflict(Carbon::parse($value), $this->except)) {
-            $hours = ScheduleService::MIN_GAP_MINUTES / 60;
+        try {
+            $at = new DateTimeImmutable((string) $value);
+        } catch (Exception) {
+            return;
+        }
+
+        if ($this->schedule->hasConflict($at, $this->exceptType, $this->exceptId)) {
+            $hours = $this->schedule->minGapHours();
 
             $fail("V tomto čase už je naplánovaný jiný trénink nebo zápas. Mezi akcemi musí být alespoň {$hours} hodiny.");
         }

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Services\UserService;
+use App\Http\Support\PasswordResetMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Sokol\Application\Dto\PasswordResetResult;
+use Sokol\Application\Services\UserService;
 
 class NewPasswordController extends Controller
 {
@@ -38,18 +38,14 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            fn (User $user) => $this->users->resetPassword($user, $request->password)
+        $result = $this->users->resetPassword(
+            (string) $request->input('email'),
+            (string) $request->input('token'),
+            (string) $request->input('password'),
         );
+        $status = PasswordResetMessages::key($result);
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        return $status == Password::PASSWORD_RESET
+        return $result === PasswordResetResult::Reset
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withInput($request->only('email'))
                         ->withErrors(['email' => __($status)]);
