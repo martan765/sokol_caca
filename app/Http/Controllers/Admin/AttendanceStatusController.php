@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AttendanceStatusRequest;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Services\AttendanceService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
 
 /**
  * Stavy účasti jsou systémový číselník – lze je jen přejmenovat.
@@ -13,7 +13,7 @@ use Sokol\Application\Services\AttendanceService;
 class AttendanceStatusController extends Controller
 {
     public function __construct(
-        private readonly AttendanceService $attendance,
+        private readonly AttendanceServiceInterface $attendance,
         private readonly LoggerInterface $logger,
     ) {}
 

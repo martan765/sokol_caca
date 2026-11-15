@@ -7,15 +7,15 @@ use App\Http\Requests\Admin\AttendanceSheetRequest;
 use App\Http\Requests\Admin\GameRequest;
 use App\Http\Support\Paging;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Services\AttendanceService;
-use Sokol\Application\Services\GameService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\GameServiceInterface;
 use Sokol\Domain\Enums\EventType;
 
 class GameController extends Controller
 {
     public function __construct(
-        private readonly GameService $games,
-        private readonly AttendanceService $attendance,
+        private readonly GameServiceInterface $games,
+        private readonly AttendanceServiceInterface $attendance,
         private readonly LoggerInterface $logger,
     ) {}
 

@@ -4,12 +4,12 @@ namespace App\View\Composers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class CurrentUserComposer
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
     ) {}
 
     public function compose(View $view): void

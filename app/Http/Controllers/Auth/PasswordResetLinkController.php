@@ -7,13 +7,13 @@ use App\Http\Support\PasswordResetMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 use Sokol\Domain\Enums\PasswordResetResult;
 
 class PasswordResetLinkController extends Controller
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
     ) {}
 
     /**

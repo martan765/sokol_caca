@@ -7,12 +7,12 @@ use App\Http\Requests\Admin\UserRequest;
 use App\Http\Support\Paging;
 use Illuminate\Support\Facades\Gate;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class UserController extends Controller
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
         private readonly LoggerInterface $logger,
     ) {}
 

@@ -8,13 +8,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 use Sokol\Domain\Enums\PasswordResetResult;
 
 class NewPasswordController extends Controller
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
     ) {}
 
     /**

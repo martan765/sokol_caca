@@ -1,8 +1,9 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
 use DateTimeImmutable;
+use Sokol\Application\Abstraction\DashboardServiceInterface;
 use Sokol\Application\ViewModels\AdminMonthView;
 use Sokol\Application\ViewModels\AdminPlayerMonthView;
 use Sokol\Application\ViewModels\AttendanceStatsView;
@@ -24,7 +25,7 @@ use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 /**
  * Měsíční přehled akcí a docházkové statistiky pro dashboard.
  */
-class DashboardService
+class DashboardService implements DashboardServiceInterface
 {
     public function __construct(
         private readonly TrainingRepositoryInterface $trainings,

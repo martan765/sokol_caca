@@ -5,7 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class CurrentPassword implements ValidationRule
 {
@@ -13,7 +13,7 @@ class CurrentPassword implements ValidationRule
     {
         $id = Auth::id();
 
-        if ($id === null || ! app(UserService::class)->checkPassword((int) $id, (string) $value)) {
+        if ($id === null || ! app(UserServiceInterface::class)->checkPassword((int) $id, (string) $value)) {
             $fail('validation.current_password')->translate();
         }
     }

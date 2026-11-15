@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Sokol\Application\Services\GameTypeService;
+use Sokol\Application\Abstraction\GameTypeServiceInterface;
 
 class UniqueGameTypeName implements ValidationRule
 {
@@ -14,7 +14,7 @@ class UniqueGameTypeName implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (app(GameTypeService::class)->nameExists((string) $value, $this->ignoreId)) {
+        if (app(GameTypeServiceInterface::class)->nameExists((string) $value, $this->ignoreId)) {
             $fail('validation.unique')->translate();
         }
     }

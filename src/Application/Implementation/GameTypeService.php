@@ -1,7 +1,8 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\GameTypeServiceInterface;
 use Sokol\Application\Dto\GameTypeData;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\GameTypeView;
@@ -9,7 +10,7 @@ use Sokol\Domain\Entities\GameType;
 use Sokol\Domain\Exceptions\DomainRuleViolation;
 use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 
-class GameTypeService
+class GameTypeService implements GameTypeServiceInterface
 {
     public function __construct(
         private readonly GameTypeRepositoryInterface $types,

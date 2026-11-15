@@ -1,7 +1,8 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\TrainingServiceInterface;
 use Sokol\Application\Dto\TrainingData;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\TrainingView;
@@ -11,7 +12,7 @@ use Sokol\Domain\Interfaces\Managers\ClockInterface;
 use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
 
-class TrainingService
+class TrainingService implements TrainingServiceInterface
 {
     public const PER_PAGE = 15;
 

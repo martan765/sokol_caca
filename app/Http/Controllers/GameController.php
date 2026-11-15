@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Sokol\Application\Services\AttendanceService;
-use Sokol\Application\Services\GameService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\GameServiceInterface;
 
 /**
  * Veřejný přehled nadcházejících zápasů s hlasováním o účasti.
@@ -12,8 +12,8 @@ use Sokol\Application\Services\GameService;
 class GameController extends Controller
 {
     public function __construct(
-        private readonly GameService $games,
-        private readonly AttendanceService $attendance,
+        private readonly GameServiceInterface $games,
+        private readonly AttendanceServiceInterface $attendance,
     ) {}
 
     public function index()

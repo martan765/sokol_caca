@@ -1,7 +1,8 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\GameServiceInterface;
 use Sokol\Application\Dto\GameData;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\GameTypeView;
@@ -15,7 +16,7 @@ use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
 
-class GameService
+class GameService implements GameServiceInterface
 {
     public const PER_PAGE = 15;
 

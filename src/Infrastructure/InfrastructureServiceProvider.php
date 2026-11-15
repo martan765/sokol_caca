@@ -3,6 +3,7 @@
 namespace Sokol\Infrastructure;
 
 use Illuminate\Support\ServiceProvider;
+use Sokol\Domain\Interfaces\Managers\AccountManagerInterface;
 use Sokol\Domain\Interfaces\Managers\ClockInterface;
 use Sokol\Domain\Interfaces\Managers\ClubSettingsInterface;
 use Sokol\Domain\Interfaces\Managers\PasswordHasherInterface;
@@ -16,6 +17,7 @@ use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
+use Sokol\Infrastructure\Auth\LaravelAccountManager;
 use Sokol\Infrastructure\Auth\LaravelPasswordHasher;
 use Sokol\Infrastructure\Auth\LaravelPasswordResetBroker;
 use Sokol\Infrastructure\Auth\LaravelUserEventNotifier;
@@ -40,6 +42,7 @@ class InfrastructureServiceProvider extends ServiceProvider
         AttendanceStatusRepositoryInterface::class => EloquentAttendanceStatusRepository::class,
         AttendanceRepositoryInterface::class       => EloquentAttendanceRepository::class,
 
+        AccountManagerInterface::class      => LaravelAccountManager::class,
         PasswordHasherInterface::class      => LaravelPasswordHasher::class,
         PasswordResetBrokerInterface::class => LaravelPasswordResetBroker::class,
         UserEventNotifierInterface::class   => LaravelUserEventNotifier::class,

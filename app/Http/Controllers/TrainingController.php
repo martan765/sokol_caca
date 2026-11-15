@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Sokol\Application\Services\AttendanceService;
-use Sokol\Application\Services\TrainingService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\TrainingServiceInterface;
 
 /**
  * Veřejný přehled nadcházejících tréninků s hlasováním o účasti.
@@ -12,8 +12,8 @@ use Sokol\Application\Services\TrainingService;
 class TrainingController extends Controller
 {
     public function __construct(
-        private readonly TrainingService $trainings,
-        private readonly AttendanceService $attendance,
+        private readonly TrainingServiceInterface $trainings,
+        private readonly AttendanceServiceInterface $attendance,
     ) {}
 
     public function index()

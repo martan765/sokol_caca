@@ -3,12 +3,12 @@
 namespace App\Policies;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class UserPolicy
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
     ) {}
 
     /**

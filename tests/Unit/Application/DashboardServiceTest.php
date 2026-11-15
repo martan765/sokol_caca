@@ -4,7 +4,7 @@ namespace Tests\Unit\Application;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
-use Sokol\Application\Services\DashboardService;
+use Sokol\Application\Implementation\DashboardService;
 use Sokol\Domain\Entities\Training;
 use Sokol\Domain\Entities\User;
 use Sokol\Domain\Enums\AttendanceStatusId;

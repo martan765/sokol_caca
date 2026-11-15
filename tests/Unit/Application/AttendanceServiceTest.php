@@ -6,7 +6,7 @@ use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Sokol\Application\Dto\AttendanceSheetRow;
 use Sokol\Application\Dto\AttendanceVoteData;
-use Sokol\Application\Services\AttendanceService;
+use Sokol\Application\Implementation\AttendanceService;
 use Sokol\Domain\Entities\Training;
 use Sokol\Domain\Entities\User;
 use Sokol\Domain\Enums\AttendanceStatusId;

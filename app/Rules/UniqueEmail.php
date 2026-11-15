@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class UniqueEmail implements ValidationRule
 {
@@ -14,7 +14,7 @@ class UniqueEmail implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (app(UserService::class)->isEmailTaken((string) $value, $this->ignoreUserId)) {
+        if (app(UserServiceInterface::class)->isEmailTaken((string) $value, $this->ignoreUserId)) {
             $fail('validation.unique')->translate();
         }
     }

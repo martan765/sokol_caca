@@ -1,14 +1,15 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\WeatherServiceInterface;
 use Sokol\Application\ViewModels\WeatherDayView;
 use Sokol\Application\ViewModels\WeatherView;
 use Sokol\Domain\Interfaces\Managers\ClockInterface;
 use Sokol\Domain\Interfaces\Managers\WeatherProviderInterface;
 use Sokol\Domain\Weather\DailyWeather;
 
-class WeatherService
+class WeatherService implements WeatherServiceInterface
 {
     public function __construct(
         private readonly WeatherProviderInterface $provider,

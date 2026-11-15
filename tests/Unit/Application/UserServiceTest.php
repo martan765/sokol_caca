@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Sokol\Application\Dto\AdminUpdateUserData;
 use Sokol\Application\Dto\RegisterUserData;
 use Sokol\Application\Dto\UpdateProfileData;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Implementation\UserService;
 use Sokol\Domain\Enums\PasswordResetResult;
 use Sokol\Domain\Enums\Role;
 use Tests\Fakes\FakePasswordResetBroker;

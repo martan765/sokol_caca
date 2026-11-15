@@ -1,7 +1,8 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\UserServiceInterface;
 use Sokol\Application\Dto\AdminUpdateUserData;
 use Sokol\Application\Dto\RegisterUserData;
 use Sokol\Application\Dto\UpdateProfileData;
@@ -16,7 +17,7 @@ use Sokol\Domain\Interfaces\Managers\UserEventNotifierInterface;
 use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
 
-class UserService
+class UserService implements UserServiceInterface
 {
     public const PER_PAGE = 20;
 

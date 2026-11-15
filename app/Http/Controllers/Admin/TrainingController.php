@@ -7,15 +7,15 @@ use App\Http\Requests\Admin\AttendanceSheetRequest;
 use App\Http\Requests\Admin\TrainingRequest;
 use App\Http\Support\Paging;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Services\AttendanceService;
-use Sokol\Application\Services\TrainingService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\TrainingServiceInterface;
 use Sokol\Domain\Enums\EventType;
 
 class TrainingController extends Controller
 {
     public function __construct(
-        private readonly TrainingService $trainings,
-        private readonly AttendanceService $attendance,
+        private readonly TrainingServiceInterface $trainings,
+        private readonly AttendanceServiceInterface $attendance,
         private readonly LoggerInterface $logger,
     ) {}
 

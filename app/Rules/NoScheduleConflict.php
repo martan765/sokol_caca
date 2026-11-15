@@ -6,7 +6,7 @@ use Closure;
 use DateTimeImmutable;
 use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Sokol\Application\Services\ScheduleService;
+use Sokol\Application\Abstraction\ScheduleServiceInterface;
 use Sokol\Domain\Enums\EventType;
 
 /**
@@ -22,7 +22,7 @@ class NoScheduleConflict implements ValidationRule
     private ?int $exceptId = null;
 
     public function __construct(
-        private readonly ScheduleService $schedule,
+        private readonly ScheduleServiceInterface $schedule,
     ) {}
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
 use Sokol\Application\ViewModels\VoterView;
 use Sokol\Domain\Enums\EventType;

@@ -1,7 +1,8 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
 use Sokol\Application\Dto\AttendanceSheetRow;
 use Sokol\Application\Dto\AttendanceVoteData;
 use Sokol\Application\Support\Changes;
@@ -20,7 +21,7 @@ use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 
-class AttendanceService
+class AttendanceService implements AttendanceServiceInterface
 {
     public function __construct(
         private readonly AttendanceRepositoryInterface $attendance,

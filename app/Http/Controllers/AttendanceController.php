@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendanceRequest;
-use Sokol\Application\Services\AttendanceService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
 
 class AttendanceController extends Controller
 {
     public function __construct(
-        private readonly AttendanceService $attendance,
+        private readonly AttendanceServiceInterface $attendance,
     ) {}
 
     public function store(StoreAttendanceRequest $request)

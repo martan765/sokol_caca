@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GameTypeRequest;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Services\GameTypeService;
+use Sokol\Application\Abstraction\GameTypeServiceInterface;
 use Sokol\Domain\Exceptions\DomainRuleViolation;
 
 class GameTypeController extends Controller
 {
     public function __construct(
-        private readonly GameTypeService $types,
+        private readonly GameTypeServiceInterface $types,
         private readonly LoggerInterface $logger,
     ) {}
 

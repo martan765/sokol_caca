@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileDeleteRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Sokol\Application\Services\UserService;
+use Sokol\Application\Abstraction\AccountServiceInterface;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class ProfileController extends Controller
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
+        private readonly AccountServiceInterface $accounts,
     ) {}
 
     /**
@@ -43,7 +44,7 @@ class ProfileController extends Controller
     {
         $userId = $this->currentUserId();
 
-        Auth::logout();
+        $this->accounts->logout();
 
         $this->users->delete($userId);
 

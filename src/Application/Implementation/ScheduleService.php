@@ -1,8 +1,9 @@
 <?php
 
-namespace Sokol\Application\Services;
+namespace Sokol\Application\Implementation;
 
 use DateTimeImmutable;
+use Sokol\Application\Abstraction\ScheduleServiceInterface;
 use Sokol\Domain\Enums\EventType;
 use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
@@ -11,7 +12,7 @@ use Sokol\Domain\Schedule\ScheduleRules;
 /**
  * Kalendář týmu – tréninky i zápasy dohromady.
  */
-class ScheduleService
+class ScheduleService implements ScheduleServiceInterface
 {
     public function __construct(
         private readonly TrainingRepositoryInterface $trainings,
