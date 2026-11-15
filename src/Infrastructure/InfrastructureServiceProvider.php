@@ -32,7 +32,7 @@ use Sokol\Infrastructure\Weather\OpenMeteoWeatherProvider;
 
 class InfrastructureServiceProvider extends ServiceProvider
 {
-    public array $bindings = [
+    public $bindings = [
         UserRepositoryInterface::class             => EloquentUserRepository::class,
         TrainingRepositoryInterface::class         => EloquentTrainingRepository::class,
         GameRepositoryInterface::class             => EloquentGameRepository::class,
@@ -48,7 +48,7 @@ class InfrastructureServiceProvider extends ServiceProvider
         ClubSettings::class        => ConfigClubSettings::class,
     ];
 
-    public array $singletons = [
+    public $singletons = [
         Clock::class => SystemClock::class,
     ];
 
