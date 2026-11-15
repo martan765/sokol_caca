@@ -2,10 +2,10 @@
 
 namespace Tests\Fakes;
 
-use Sokol\Application\Dto\PasswordResetResult;
-use Sokol\Application\Ports\PasswordResetBroker;
+use Sokol\Domain\Enums\PasswordResetResult;
+use Sokol\Domain\Interfaces\Managers\PasswordResetBrokerInterface;
 
-final class FakePasswordResetBroker implements PasswordResetBroker
+final class FakePasswordResetBroker implements PasswordResetBrokerInterface
 {
     public function __construct(
         private readonly int $userId = 1,

@@ -1,16 +1,16 @@
 <?php
 
-namespace Sokol\Domain\Repositories;
+namespace Sokol\Domain\Interfaces\Repositories;
 
 use DateTimeImmutable;
-use Sokol\Domain\Entities\Training;
+use Sokol\Domain\Entities\Game;
 use Sokol\Domain\Pagination\Page;
 
-interface TrainingRepositoryInterface extends RepositoryInterface
+interface GameRepositoryInterface extends RepositoryInterface
 {
-    public function findById(int $id): ?Training;
+    public function findById(int $id): ?Game;
 
-    public function getById(int $id): Training;
+    public function getById(int $id): Game;
 
     public function upcoming(DateTimeImmutable $from): array;
 
@@ -18,7 +18,7 @@ interface TrainingRepositoryInterface extends RepositoryInterface
 
     public function paginate(int $page, int $perPage): Page;
 
-    public function save(Training $training): Training;
+    public function save(Game $game): Game;
 
     public function existsBetween(DateTimeImmutable $from, DateTimeImmutable $to, ?int $exceptId = null): bool;
 }

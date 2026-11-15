@@ -4,7 +4,7 @@ namespace Sokol\Infrastructure\Persistence\Eloquent\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Sokol\Domain\Entities\AttendanceStatus;
-use Sokol\Domain\Repositories\AttendanceStatusRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceStatusRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\AttendanceStatusMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\AttendanceStatusModel;
 

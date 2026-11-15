@@ -7,8 +7,8 @@ use App\Http\Support\PasswordResetMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Sokol\Application\Dto\PasswordResetResult;
 use Sokol\Application\Services\UserService;
+use Sokol\Domain\Enums\PasswordResetResult;
 
 class PasswordResetLinkController extends Controller
 {

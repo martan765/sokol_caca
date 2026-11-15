@@ -2,9 +2,9 @@
 
 namespace Sokol\Infrastructure\System;
 
-use Sokol\Application\Ports\ClubSettings;
+use Sokol\Domain\Interfaces\Managers\ClubSettingsInterface;
 
-final class ConfigClubSettings implements ClubSettings
+final class ConfigClubSettings implements ClubSettingsInterface
 {
     public function clubName(): string
     {

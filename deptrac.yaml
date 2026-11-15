@@ -48,7 +48,6 @@ deptrac:
     Application:
       - Domain
     Infrastructure:
-      - Application
       - Domain
       - Framework
     Presentation:

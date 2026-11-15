@@ -4,8 +4,8 @@ namespace Tests\Fakes;
 
 use DateTimeImmutable;
 use Sokol\Domain\Entities\Training;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
 
 final class InMemoryTrainingRepository extends InMemoryRepository implements TrainingRepositoryInterface
 {

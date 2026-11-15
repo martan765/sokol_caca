@@ -5,8 +5,8 @@ namespace Sokol\Infrastructure\Persistence\Eloquent\Repositories;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Sokol\Domain\Entities\Training;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\TrainingMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
 

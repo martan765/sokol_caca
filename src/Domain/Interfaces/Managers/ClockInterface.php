@@ -1,10 +1,10 @@
 <?php
 
-namespace Sokol\Application\Ports;
+namespace Sokol\Domain\Interfaces\Managers;
 
 use DateTimeImmutable;
 
-interface Clock
+interface ClockInterface
 {
     public function now(): DateTimeImmutable;
 }

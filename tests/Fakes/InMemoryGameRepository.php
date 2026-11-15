@@ -4,8 +4,8 @@ namespace Tests\Fakes;
 
 use DateTimeImmutable;
 use Sokol\Domain\Entities\Game;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
 
 final class InMemoryGameRepository extends InMemoryRepository implements GameRepositoryInterface
 {

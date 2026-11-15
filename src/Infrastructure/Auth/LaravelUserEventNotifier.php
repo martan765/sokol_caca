@@ -5,11 +5,11 @@ namespace Sokol\Infrastructure\Auth;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
-use Sokol\Application\Ports\UserEventNotifier;
 use Sokol\Domain\Exceptions\EntityNotFoundException;
+use Sokol\Domain\Interfaces\Managers\UserEventNotifierInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
-final class LaravelUserEventNotifier implements UserEventNotifier
+final class LaravelUserEventNotifier implements UserEventNotifierInterface
 {
     public function registered(int $userId): void
     {

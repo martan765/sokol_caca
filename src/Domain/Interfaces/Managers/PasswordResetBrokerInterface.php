@@ -1,10 +1,10 @@
 <?php
 
-namespace Sokol\Application\Ports;
+namespace Sokol\Domain\Interfaces\Managers;
 
-use Sokol\Application\Dto\PasswordResetResult;
+use Sokol\Domain\Enums\PasswordResetResult;
 
-interface PasswordResetBroker
+interface PasswordResetBrokerInterface
 {
     public function sendResetLink(string $email): PasswordResetResult;
 

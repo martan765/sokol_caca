@@ -4,8 +4,8 @@ namespace Sokol\Application\Services;
 
 use Sokol\Application\ViewModels\VoterView;
 use Sokol\Domain\Enums\EventType;
-use Sokol\Domain\Repositories\AttendanceRepositoryInterface;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 
 class VoterListBuilder
 {

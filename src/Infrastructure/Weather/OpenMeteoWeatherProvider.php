@@ -8,12 +8,12 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Sokol\Application\Dto\CurrentWeather;
-use Sokol\Application\Dto\DailyWeather;
-use Sokol\Application\Dto\WeatherForecast;
-use Sokol\Application\Ports\WeatherProvider;
+use Sokol\Domain\Interfaces\Managers\WeatherProviderInterface;
+use Sokol\Domain\Weather\CurrentWeather;
+use Sokol\Domain\Weather\DailyWeather;
+use Sokol\Domain\Weather\WeatherForecast;
 
-final class OpenMeteoWeatherProvider implements WeatherProvider
+final class OpenMeteoWeatherProvider implements WeatherProviderInterface
 {
     private const URL       = 'https://api.open-meteo.com/v1/forecast';
     private const CACHE_KEY = 'team_weather';

@@ -3,9 +3,9 @@
 namespace Sokol\Infrastructure\Auth;
 
 use Illuminate\Contracts\Hashing\Hasher;
-use Sokol\Application\Ports\PasswordHasher;
+use Sokol\Domain\Interfaces\Managers\PasswordHasherInterface;
 
-final class LaravelPasswordHasher implements PasswordHasher
+final class LaravelPasswordHasher implements PasswordHasherInterface
 {
     public function __construct(
         private readonly Hasher $hasher,

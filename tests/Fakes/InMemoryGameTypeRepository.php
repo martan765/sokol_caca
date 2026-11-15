@@ -3,8 +3,8 @@
 namespace Tests\Fakes;
 
 use Sokol\Domain\Entities\GameType;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
-use Sokol\Domain\Repositories\GameTypeRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 
 final class InMemoryGameTypeRepository extends InMemoryRepository implements GameTypeRepositoryInterface
 {

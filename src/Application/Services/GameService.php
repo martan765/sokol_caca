@@ -3,17 +3,17 @@
 namespace Sokol\Application\Services;
 
 use Sokol\Application\Dto\GameData;
-use Sokol\Application\Ports\ClubSettings;
-use Sokol\Application\Ports\Clock;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\GameTypeView;
 use Sokol\Application\ViewModels\GameView;
 use Sokol\Domain\Entities\Game;
 use Sokol\Domain\Entities\GameType;
 use Sokol\Domain\Enums\EventType;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
+use Sokol\Domain\Interfaces\Managers\ClubSettingsInterface;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
-use Sokol\Domain\Repositories\GameTypeRepositoryInterface;
 
 class GameService
 {
@@ -23,8 +23,8 @@ class GameService
         private readonly GameRepositoryInterface $games,
         private readonly GameTypeRepositoryInterface $types,
         private readonly VoterListBuilder $voters,
-        private readonly ClubSettings $club,
-        private readonly Clock $clock,
+        private readonly ClubSettingsInterface $club,
+        private readonly ClockInterface $clock,
     ) {}
 
     public function upcoming(?int $viewerId): array

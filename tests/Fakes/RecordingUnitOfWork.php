@@ -2,9 +2,9 @@
 
 namespace Tests\Fakes;
 
-use Sokol\Application\Ports\UnitOfWork;
+use Sokol\Domain\Interfaces\Managers\UnitOfWorkInterface;
 
-final class RecordingUnitOfWork implements UnitOfWork
+final class RecordingUnitOfWork implements UnitOfWorkInterface
 {
     public int $transactions = 0;
 

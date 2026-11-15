@@ -3,9 +3,9 @@
 namespace Sokol\Infrastructure\Persistence;
 
 use Illuminate\Database\ConnectionInterface;
-use Sokol\Application\Ports\UnitOfWork;
+use Sokol\Domain\Interfaces\Managers\UnitOfWorkInterface;
 
-final class EloquentUnitOfWork implements UnitOfWork
+final class EloquentUnitOfWork implements UnitOfWorkInterface
 {
     public function __construct(
         private readonly ConnectionInterface $connection,

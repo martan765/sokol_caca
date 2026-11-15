@@ -2,9 +2,9 @@
 
 namespace Tests\Fakes;
 
-use Sokol\Application\Ports\ClubSettings;
+use Sokol\Domain\Interfaces\Managers\ClubSettingsInterface;
 
-final class FixedClubSettings implements ClubSettings
+final class FixedClubSettings implements ClubSettingsInterface
 {
     public function __construct(
         private readonly string $name = 'Částkov',

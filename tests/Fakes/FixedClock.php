@@ -3,9 +3,9 @@
 namespace Tests\Fakes;
 
 use DateTimeImmutable;
-use Sokol\Application\Ports\Clock;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
 
-final class FixedClock implements Clock
+final class FixedClock implements ClockInterface
 {
     public DateTimeImmutable $now;
 

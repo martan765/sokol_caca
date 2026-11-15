@@ -3,9 +3,9 @@
 namespace Sokol\Infrastructure\System;
 
 use DateTimeImmutable;
-use Sokol\Application\Ports\Clock;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
 
-final class SystemClock implements Clock
+final class SystemClock implements ClockInterface
 {
     public function now(): DateTimeImmutable
     {

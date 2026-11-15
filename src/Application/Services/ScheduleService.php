@@ -4,8 +4,8 @@ namespace Sokol\Application\Services;
 
 use DateTimeImmutable;
 use Sokol\Domain\Enums\EventType;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Schedule\ScheduleRules;
 
 /**

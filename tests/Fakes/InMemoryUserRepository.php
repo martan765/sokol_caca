@@ -3,8 +3,8 @@
 namespace Tests\Fakes;
 
 use Sokol\Domain\Entities\User;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
 
 final class InMemoryUserRepository extends InMemoryRepository implements UserRepositoryInterface
 {

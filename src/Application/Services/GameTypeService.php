@@ -7,7 +7,7 @@ use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\GameTypeView;
 use Sokol\Domain\Entities\GameType;
 use Sokol\Domain\Exceptions\DomainRuleViolation;
-use Sokol\Domain\Repositories\GameTypeRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 
 class GameTypeService
 {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Sokol\Domain\Entities\Attendance;
 use Sokol\Domain\Enums\EventType;
 use Sokol\Domain\Exceptions\EntityNotFoundException;
-use Sokol\Domain\Repositories\AttendanceRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\AttendanceMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameAttendanceModel;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;

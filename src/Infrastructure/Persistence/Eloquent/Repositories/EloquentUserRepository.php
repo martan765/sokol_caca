@@ -5,8 +5,8 @@ namespace Sokol\Infrastructure\Persistence\Eloquent\Repositories;
 use Illuminate\Database\Eloquent\Model;
 use Sokol\Domain\Entities\User;
 use Sokol\Domain\Enums\Role;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\UserMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 

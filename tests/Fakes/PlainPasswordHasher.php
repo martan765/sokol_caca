@@ -2,9 +2,9 @@
 
 namespace Tests\Fakes;
 
-use Sokol\Application\Ports\PasswordHasher;
+use Sokol\Domain\Interfaces\Managers\PasswordHasherInterface;
 
-final class PlainPasswordHasher implements PasswordHasher
+final class PlainPasswordHasher implements PasswordHasherInterface
 {
     public function hash(string $plainPassword): string
     {

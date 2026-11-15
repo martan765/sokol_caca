@@ -4,7 +4,7 @@ namespace Tests\Fakes;
 
 use Sokol\Domain\Entities\Attendance;
 use Sokol\Domain\Enums\EventType;
-use Sokol\Domain\Repositories\AttendanceRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceRepositoryInterface;
 
 final class InMemoryAttendanceRepository implements AttendanceRepositoryInterface
 {

@@ -5,8 +5,8 @@ namespace Sokol\Infrastructure\Persistence\Eloquent\Repositories;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Sokol\Domain\Entities\Game;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\GameMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
 

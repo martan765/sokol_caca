@@ -16,10 +16,10 @@ use Sokol\Domain\Entities\Game;
 use Sokol\Domain\Entities\Training;
 use Sokol\Domain\Enums\AttendanceStatusId;
 use Sokol\Domain\Enums\EventType;
-use Sokol\Domain\Repositories\AttendanceRepositoryInterface;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 
 /**
  * Měsíční přehled akcí a docházkové statistiky pro dashboard.

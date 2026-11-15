@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokol\Domain\Repositories;
+namespace Sokol\Domain\Interfaces\Repositories;
 
 use Sokol\Domain\Exceptions\EntityNotFoundException;
 

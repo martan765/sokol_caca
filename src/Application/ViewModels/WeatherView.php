@@ -3,7 +3,7 @@
 namespace Sokol\Application\ViewModels;
 
 use DateTimeImmutable;
-use Sokol\Application\Dto\CurrentWeather;
+use Sokol\Domain\Weather\CurrentWeather;
 
 final readonly class WeatherView
 {

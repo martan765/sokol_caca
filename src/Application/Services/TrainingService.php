@@ -3,13 +3,13 @@
 namespace Sokol\Application\Services;
 
 use Sokol\Application\Dto\TrainingData;
-use Sokol\Application\Ports\Clock;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\TrainingView;
 use Sokol\Domain\Entities\Training;
 use Sokol\Domain\Enums\EventType;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
 
 class TrainingService
 {
@@ -18,7 +18,7 @@ class TrainingService
     public function __construct(
         private readonly TrainingRepositoryInterface $trainings,
         private readonly VoterListBuilder $voters,
-        private readonly Clock $clock,
+        private readonly ClockInterface $clock,
     ) {}
 
     public function upcoming(?int $viewerId): array

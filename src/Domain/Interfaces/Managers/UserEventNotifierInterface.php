@@ -1,8 +1,8 @@
 <?php
 
-namespace Sokol\Application\Ports;
+namespace Sokol\Domain\Interfaces\Managers;
 
-interface UserEventNotifier
+interface UserEventNotifierInterface
 {
     public function registered(int $userId): void;
 

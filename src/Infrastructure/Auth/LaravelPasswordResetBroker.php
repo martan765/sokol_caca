@@ -4,11 +4,11 @@ namespace Sokol\Infrastructure\Auth;
 
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Sokol\Application\Dto\PasswordResetResult;
-use Sokol\Application\Ports\PasswordResetBroker;
+use Sokol\Domain\Enums\PasswordResetResult;
+use Sokol\Domain\Interfaces\Managers\PasswordResetBrokerInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
-final class LaravelPasswordResetBroker implements PasswordResetBroker
+final class LaravelPasswordResetBroker implements PasswordResetBrokerInterface
 {
     public function sendResetLink(string $email): PasswordResetResult
     {

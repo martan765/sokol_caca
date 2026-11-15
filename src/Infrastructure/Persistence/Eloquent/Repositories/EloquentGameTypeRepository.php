@@ -4,7 +4,7 @@ namespace Sokol\Infrastructure\Persistence\Eloquent\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Sokol\Domain\Entities\GameType;
-use Sokol\Domain\Repositories\GameTypeRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameTypeRepositoryInterface;
 use Sokol\Infrastructure\Persistence\Eloquent\Mappers\GameTypeMapper;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameTypeModel;

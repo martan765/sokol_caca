@@ -1,8 +1,8 @@
 <?php
 
-namespace Sokol\Application\Ports;
+namespace Sokol\Domain\Interfaces\Managers;
 
-interface PasswordHasher
+interface PasswordHasherInterface
 {
     public function hash(string $plainPassword): string;
 

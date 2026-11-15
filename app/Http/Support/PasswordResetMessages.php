@@ -2,7 +2,7 @@
 
 namespace App\Http\Support;
 
-use Sokol\Application\Dto\PasswordResetResult;
+use Sokol\Domain\Enums\PasswordResetResult;
 
 final class PasswordResetMessages
 {

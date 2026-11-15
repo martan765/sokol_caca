@@ -5,7 +5,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "sokol/application": "^1.0",
         "sokol/domain": "^1.0",
         "illuminate/auth": "^12.0",
         "illuminate/cache": "^12.0",

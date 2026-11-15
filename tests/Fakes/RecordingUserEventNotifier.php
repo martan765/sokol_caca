@@ -2,9 +2,9 @@
 
 namespace Tests\Fakes;
 
-use Sokol\Application\Ports\UserEventNotifier;
+use Sokol\Domain\Interfaces\Managers\UserEventNotifierInterface;
 
-final class RecordingUserEventNotifier implements UserEventNotifier
+final class RecordingUserEventNotifier implements UserEventNotifierInterface
 {
     public array $events = [];
 

@@ -3,18 +3,18 @@
 namespace Sokol\Application\Services;
 
 use Sokol\Application\Dto\AdminUpdateUserData;
-use Sokol\Application\Dto\PasswordResetResult;
 use Sokol\Application\Dto\RegisterUserData;
 use Sokol\Application\Dto\UpdateProfileData;
-use Sokol\Application\Ports\Clock;
-use Sokol\Application\Ports\PasswordHasher;
-use Sokol\Application\Ports\PasswordResetBroker;
-use Sokol\Application\Ports\UserEventNotifier;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\UserView;
 use Sokol\Domain\Entities\User;
+use Sokol\Domain\Enums\PasswordResetResult;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
+use Sokol\Domain\Interfaces\Managers\PasswordHasherInterface;
+use Sokol\Domain\Interfaces\Managers\PasswordResetBrokerInterface;
+use Sokol\Domain\Interfaces\Managers\UserEventNotifierInterface;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 use Sokol\Domain\Pagination\Page;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
 
 class UserService
 {
@@ -22,10 +22,10 @@ class UserService
 
     public function __construct(
         private readonly UserRepositoryInterface $users,
-        private readonly PasswordHasher $hasher,
-        private readonly UserEventNotifier $notifier,
-        private readonly PasswordResetBroker $passwordReset,
-        private readonly Clock $clock,
+        private readonly PasswordHasherInterface $hasher,
+        private readonly UserEventNotifierInterface $notifier,
+        private readonly PasswordResetBrokerInterface $passwordReset,
+        private readonly ClockInterface $clock,
     ) {}
 
     public function register(RegisterUserData $data): UserView

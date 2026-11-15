@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokol\Application\Dto;
+namespace Sokol\Domain\Weather;
 
 final readonly class WeatherForecast
 {

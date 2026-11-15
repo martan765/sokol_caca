@@ -4,7 +4,6 @@ namespace Sokol\Application\Services;
 
 use Sokol\Application\Dto\AttendanceSheetRow;
 use Sokol\Application\Dto\AttendanceVoteData;
-use Sokol\Application\Ports\UnitOfWork;
 use Sokol\Application\Support\Changes;
 use Sokol\Application\ViewModels\AttendanceSheetView;
 use Sokol\Application\ViewModels\AttendanceStatusView;
@@ -14,11 +13,12 @@ use Sokol\Domain\Entities\Attendance;
 use Sokol\Domain\Entities\AttendanceStatus;
 use Sokol\Domain\Entities\User;
 use Sokol\Domain\Enums\EventType;
-use Sokol\Domain\Repositories\AttendanceRepositoryInterface;
-use Sokol\Domain\Repositories\AttendanceStatusRepositoryInterface;
-use Sokol\Domain\Repositories\GameRepositoryInterface;
-use Sokol\Domain\Repositories\TrainingRepositoryInterface;
-use Sokol\Domain\Repositories\UserRepositoryInterface;
+use Sokol\Domain\Interfaces\Managers\UnitOfWorkInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\AttendanceStatusRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\GameRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\TrainingRepositoryInterface;
+use Sokol\Domain\Interfaces\Repositories\UserRepositoryInterface;
 
 class AttendanceService
 {
@@ -28,7 +28,7 @@ class AttendanceService
         private readonly UserRepositoryInterface $users,
         private readonly TrainingRepositoryInterface $trainings,
         private readonly GameRepositoryInterface $games,
-        private readonly UnitOfWork $unitOfWork,
+        private readonly UnitOfWorkInterface $unitOfWork,
     ) {}
 
     public function vote(AttendanceVoteData $vote): void

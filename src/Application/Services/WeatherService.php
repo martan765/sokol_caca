@@ -2,17 +2,17 @@
 
 namespace Sokol\Application\Services;
 
-use Sokol\Application\Dto\DailyWeather;
-use Sokol\Application\Ports\Clock;
-use Sokol\Application\Ports\WeatherProvider;
 use Sokol\Application\ViewModels\WeatherDayView;
 use Sokol\Application\ViewModels\WeatherView;
+use Sokol\Domain\Interfaces\Managers\ClockInterface;
+use Sokol\Domain\Interfaces\Managers\WeatherProviderInterface;
+use Sokol\Domain\Weather\DailyWeather;
 
 class WeatherService
 {
     public function __construct(
-        private readonly WeatherProvider $provider,
-        private readonly Clock $clock,
+        private readonly WeatherProviderInterface $provider,
+        private readonly ClockInterface $clock,
     ) {}
 
     public function forecast(): ?WeatherView
