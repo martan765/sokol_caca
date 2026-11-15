@@ -45,7 +45,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Sokol\\ControllerTests\\": "tests-controllers/"
         }
     },
     "scripts": {
@@ -85,6 +86,9 @@
         ],
         "deptrac": [
             "@php vendor/bin/deptrac analyse --no-progress"
+        ],
+        "test:controllers": [
+            "@php vendor/bin/phpunit -c tests-controllers/phpunit.xml"
         ]
     },
     "extra": {
