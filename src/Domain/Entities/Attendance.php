@@ -2,7 +2,6 @@
 
 namespace Sokol\Domain\Entities;
 
-use Sokol\Domain\Enums\AttendanceStatusId;
 use Sokol\Domain\Enums\EventType;
 
 final class Attendance
@@ -38,10 +37,5 @@ final class Attendance
     public function note(): ?string
     {
         return $this->note;
-    }
-
-    public function isAttending(): bool
-    {
-        return $this->statusId === AttendanceStatusId::Attending->value;
     }
 }

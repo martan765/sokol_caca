@@ -37,60 +37,44 @@ Záměrně je to jednoduché — žádný zbytečně složitý systém, jen to c
 
 ---
 
-## 📁 Struktura projektu (vrstvy)
+## 📁 Struktura projektu
 
-Projekt je rozdělený na čtyři vrstvy. Domain, Application a Infrastructure jsou samostatné Composer balíčky ve složce `src/`, propojené přes `path` repositories v kořenovém `composer.json`.
-
-```
-app/                         Presentation (App\)
-├── Http/Controllers/        controllery, Admin/ = area „Admin“
-├── Http/Requests/           validace formulářů
-├── Http/Middleware/         AdminMiddleware
-├── Rules/                   vlastní validační pravidla (NoScheduleConflict, UniqueEmail…)
-├── Policies/                UserPolicy
-└── View/                    view composer, formátování datumů
-resources/views/             Blade šablony (pracují jen s ViewModely)
-
-src/Domain/                  sokol/domain (Sokol\Domain\) – čisté PHP
-├── Entities/                User, Training, Game, GameType, AttendanceStatus, Attendance
-├── Enums/                   Role, AttendanceStatusId, EventType
-├── Repositories/            rozhraní repozitářů (+ generické RepositoryInterface)
-├── Exceptions/              EntityNotFoundException, DomainRuleViolation
-├── Pagination/Page.php
-└── Schedule/ScheduleRules.php
-
-src/Application/             sokol/application (Sokol\Application\) – závisí jen na Domain
-├── Services/                UserService, TrainingService, GameService, AttendanceService…
-├── Dto/                     vstupní DTO (TrainingData, GameData, RegisterUserData…)
-├── ViewModels/              výstupy pro šablony (GameView, TrainingView, UserView…)
-└── Ports/                   rozhraní pro infrastrukturu (PasswordHasher, UnitOfWork, Clock…)
-
-src/Infrastructure/          sokol/infrastructure (Sokol\Infrastructure\) – Laravel
-├── Persistence/Eloquent/    Eloquent modely (*Model), mappery, repozitáře
-├── Persistence/EloquentUnitOfWork.php
-├── Database/Migrations/     migrace (Code-First)
-├── Auth/, Weather/, System/ implementace portů
-└── InfrastructureServiceProvider.php   bindingy rozhraní → implementace
-
-tests/                       feature testy + unit testy služeb (tests/Unit/Application)
-tests-controllers/           samostatný testovací projekt – unit testy controllerů
-```
-
-Závislosti vedou jen směrem dolů:
+Projekt je rozdělený do vrstev podobně jako vzorový projekt UTB.Eshop v C#. Domain, Application a Infrastructure jsou samostatné balíčky v `src/` (každý má svůj `composer.json`), aplikace v `app/` je Presentation.
 
 ```
-Presentation ──► Application ──► Domain
-      │                ▲
-      ▼                │
-  Framework ◄── Infrastructure
+app/                       Presentation – controllery, Admin, FormRequesty, Rules, views
+src/Domain/                entity, enumy, rozhraní repozitářů a managerů
+  Entities/
+  Enums/
+  Interfaces/Repositories/
+  Interfaces/Managers/
+src/Application/           služby, DTO a ViewModely
+  Abstraction/             rozhraní služeb (UserServiceInterface, ...)
+  Implementation/          služby (UserService, ...)
+  Dto/
+  ViewModels/
+src/Infrastructure/        Laravel/Eloquent
+  Persistence/Eloquent/    modely, mappery, repozitáře
+  Database/Migrations/
+  Database/Seeders/
+  Auth/, Weather/, System/
+tests/                     feature testy, unit testy služeb
+tests-controllers/         testy controllerů (samostatný phpunit.xml)
 ```
 
-Hranice hlídá [deptrac](https://github.com/deptrac/deptrac) (`deptrac.yaml`): Domain a Application nesmí používat Laravel, Presentation nesmí používat Infrastructure.
+Závislosti:
+- Domain nezávisí na ničem
+- Application -> Domain
+- Infrastructure -> Domain (+ Laravel)
+- Presentation -> Application, Domain (+ Laravel)
 
-Výjimky, které jsou konfigurace frameworku:
-- `config/auth.php` odkazuje na `UserModel` – Laravel guard potřebuje Eloquent model.
-- `LoginRequest` přihlašuje přes `Auth::attempt()` (guard frameworku). Registrace, změna a reset hesla i ověření e-mailu jdou přes `UserService`.
-- Seedery a factory v `database/` používají Eloquent modely přímo – jsou to testovací a ukázková data, Laravel je hledá v namespace `Database\`.
+Kontrola přes deptrac: `composer deptrac`.
+
+Bindingy rozhraní na implementace jsou v `InfrastructureServiceProvider` (repozitáře, managery) a v `AppServiceProvider` (služby).
+
+Poznámky:
+- `config/auth.php` odkazuje na `UserModel`, protože Laravel přihlašování potřebuje Eloquent model.
+- Factory zůstala v `database/factories`, používá se jen v testech.
 
 ---
 

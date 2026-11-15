@@ -11,16 +11,6 @@ final class Page
         public readonly int $perPage,
     ) {}
 
-    public function lastPage(): int
-    {
-        return max(1, (int) ceil($this->total / max(1, $this->perPage)));
-    }
-
-    public function offset(): int
-    {
-        return self::offsetFor($this->page, $this->perPage);
-    }
-
     public static function offsetFor(int $page, int $perPage): int
     {
         return (max(1, $page) - 1) * $perPage;
