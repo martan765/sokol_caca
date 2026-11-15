@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Sokol\Infrastructure\Database\Seeders;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Seeder;

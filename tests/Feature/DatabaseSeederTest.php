@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Sokol\Domain\Enums\Role;
+use Sokol\Infrastructure\Database\Seeders\UserSeeder;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
 use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
