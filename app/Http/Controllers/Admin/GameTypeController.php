@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GameTypeRequest;
-use App\Models\GameType;
-use App\Services\GameTypeService;
 use Psr\Log\LoggerInterface;
+use Sokol\Application\Abstraction\GameTypeServiceInterface;
+use Sokol\Domain\Exceptions\DomainRuleViolation;
 
 class GameTypeController extends Controller
 {
     public function __construct(
-        private readonly GameTypeService $types,
+        private readonly GameTypeServiceInterface $types,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -29,36 +29,38 @@ class GameTypeController extends Controller
 
     public function store(GameTypeRequest $request)
     {
-        $type = $this->types->create($request->validated());
+        $type = $this->types->create($request->toData());
 
         $this->logger->info('Typ zápasu vytvořen', ['game_type_id' => $type->id, 'name' => $type->name]);
 
         return redirect()->route('admin.game-types.index')->with('success', 'Typ zápasu byl přidán.');
     }
 
-    public function edit(GameType $gameType)
+    public function edit(int $gameType)
     {
-        return view('admin.game-types.edit', ['type' => $gameType]);
+        return view('admin.game-types.edit', ['type' => $this->types->get($gameType)]);
     }
 
-    public function update(GameTypeRequest $request, GameType $gameType)
+    public function update(GameTypeRequest $request, int $gameType)
     {
-        $this->types->update($gameType, $request->validated());
+        $changes = $this->types->update($gameType, $request->toData());
 
-        $this->logger->info('Typ zápasu upraven', ['game_type_id' => $gameType->id, 'changes' => $gameType->getChanges()]);
+        $this->logger->info('Typ zápasu upraven', ['game_type_id' => $gameType, 'changes' => $changes]);
 
         return redirect()->route('admin.game-types.index')->with('success', 'Typ zápasu byl upraven.');
     }
 
-    public function destroy(GameType $gameType)
+    public function destroy(int $gameType)
     {
-        if (! $this->types->delete($gameType)) {
-            $this->logger->notice('Smazání typu zápasu odmítnuto – typ je používán', ['game_type_id' => $gameType->id]);
+        try {
+            $deleted = $this->types->delete($gameType);
+        } catch (DomainRuleViolation) {
+            $this->logger->notice('Smazání typu zápasu odmítnuto – typ je používán', ['game_type_id' => $gameType]);
 
             return back()->with('error', 'Tento typ používají existující zápasy, nelze ho smazat.');
         }
 
-        $this->logger->info('Typ zápasu smazán', ['game_type_id' => $gameType->id, 'name' => $gameType->name]);
+        $this->logger->info('Typ zápasu smazán', ['game_type_id' => $deleted->id, 'name' => $deleted->name]);
 
         return redirect()->route('admin.game-types.index')->with('success', 'Typ zápasu byl smazán.');
     }

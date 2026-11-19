@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Sokol\Infrastructure\Database\Seeders\ScheduleSeeder;
+use Sokol\Infrastructure\Database\Seeders\UserSeeder;
 
 /**
  * Ukázková data. Celou databázi vytvoříš příkazem:

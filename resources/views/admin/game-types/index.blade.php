@@ -25,12 +25,12 @@
                         @forelse($types as $type)
                             <tr>
                                 <td class="px-4 py-3 font-medium">{{ $type->name }}</td>
-                                <td class="px-4 py-3">{{ $type->games_count }}</td>
+                                <td class="px-4 py-3">{{ $type->gamesCount }}</td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-end items-center gap-2">
-                                        <x-edit-link :href="route('admin.game-types.edit', $type)" />
-                                        @if($type->games_count == 0)
-                                            <x-delete-button :action="route('admin.game-types.destroy', $type)" confirm="Opravdu chceš SMAZAT tento typ zápasu?" />
+                                        <x-edit-link :href="route('admin.game-types.edit', $type->id)" />
+                                        @if($type->canDelete())
+                                            <x-delete-button :action="route('admin.game-types.destroy', $type->id)" confirm="Opravdu chceš SMAZAT tento typ zápasu?" />
                                         @else
                                             <span class="w-[30px]" title="Typ používají zápasy, nelze ho smazat"></span>
                                         @endif

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\DashboardService;
-use Illuminate\Http\Request;
+use Sokol\Application\Abstraction\DashboardServiceInterface;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class DashboardController extends Controller
 {
     public function __construct(
-        private readonly DashboardService $dashboard,
+        private readonly DashboardServiceInterface $dashboard,
+        private readonly UserServiceInterface $users,
     ) {}
 
-    public function index(Request $request)
+    public function index()
     {
-        $user = $request->user();
+        $userId = $this->currentUserId();
 
-        if ($user->isAdmin()) {
-            return view('dashboard', ['isAdmin' => true] + $this->dashboard->forAdmin());
+        if ($this->users->isAdmin($userId)) {
+            return view('dashboard', ['isAdmin' => true, 'dashboard' => $this->dashboard->forAdmin()]);
         }
 
-        return view('dashboard', ['isAdmin' => false] + $this->dashboard->forPlayer($user));
+        return view('dashboard', ['isAdmin' => false, 'dashboard' => $this->dashboard->forPlayer($userId)]);
     }
 }

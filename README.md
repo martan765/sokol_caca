@@ -32,45 +32,49 @@ Záměrně je to jednoduché — žádný zbytečně složitý systém, jen to c
 | Šablony | Blade |
 | CSS framework | Tailwind CSS v3 |
 | Interaktivita | Alpine.js |
-| Databáze | MySQL |
+| Databáze | SQLite (výchozí), případně MySQL |
 | Sestavení frontendu | Vite |
 
 ---
 
 ## 📁 Struktura projektu
 
+Projekt je rozdělený do vrstev podobně jako vzorový projekt UTB.Eshop v C#. Domain, Application a Infrastructure jsou samostatné balíčky v `src/` (každý má svůj `composer.json`), aplikace v `app/` je Presentation.
+
 ```
-app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── DashboardController.php   # Dashboardy hráče i trenéra
-│   │   ├── TrainingController.php    # Přehled a mazání tréninků
-│   │   ├── GameController.php        # Přehled, vytváření a mazání zápasů
-│   │   ├── AttendanceController.php  # Ukládání hlasování o docházce
-│   │   ├── ProfileController.php     # Správa profilu uživatele
-│   │   └── Admin/
-│   │       └── TrainingController.php  # Vytváření tréninků (pouze admin)
-│   └── Middleware/
-│       └── AdminMiddleware.php       # Ochrana admin tras
-├── Models/
-│   ├── User.php       # Uživatel s relacemi na tréninky a zápasy
-│   ├── Training.php   # Model tréninku
-│   └── Game.php       # Model zápasu
-resources/views/
-├── dashboard.blade.php          # Dashboard (hráč i trenér)
-├── trainings/index.blade.php    # Přehled tréninků s hlasováním
-├── games/index.blade.php        # Přehled zápasů s hlasováním
-├── admin/trainings/create.blade.php
-├── games/create.blade.php
-├── profile/
-└── layouts/
-    ├── app.blade.php
-    ├── guest.blade.php
-    └── navigation.blade.php
-routes/
-├── web.php
-└── auth.php
+app/                       Presentation – controllery, Admin, FormRequesty, Rules, views
+src/Domain/                entity, enumy, rozhraní repozitářů a managerů
+  Entities/
+  Enums/
+  Interfaces/Repositories/
+  Interfaces/Managers/
+src/Application/           služby, DTO a ViewModely
+  Abstraction/             rozhraní služeb (UserServiceInterface, ...)
+  Implementation/          služby (UserService, ...)
+  Dto/
+  ViewModels/
+src/Infrastructure/        Laravel/Eloquent
+  Persistence/Eloquent/    modely, mappery, repozitáře
+  Database/Migrations/
+  Database/Seeders/
+  Auth/, Weather/, System/
+tests/                     feature testy, unit testy služeb
+tests-controllers/         testy controllerů (samostatný phpunit.xml)
 ```
+
+Závislosti:
+- Domain nezávisí na ničem
+- Application -> Domain
+- Infrastructure -> Domain (+ Laravel)
+- Presentation -> Application, Domain (+ Laravel)
+
+Kontrola přes deptrac: `composer deptrac`.
+
+Bindingy rozhraní na implementace jsou v `InfrastructureServiceProvider` (repozitáře, managery) a v `AppServiceProvider` (služby).
+
+Poznámky:
+- `config/auth.php` odkazuje na `UserModel`, protože Laravel přihlašování potřebuje Eloquent model.
+- Factory zůstala v `database/factories`, používá se jen v testech.
 
 ---
 
@@ -120,36 +124,29 @@ Stejná struktura jako `training_attendance`, pouze s `game_id` místo `training
 
 ## 🚀 Instalace a spuštění
 
-**Požadavky:** PHP 8.2+, Composer, Node.js 18+, MySQL
+**Požadavky:** PHP 8.2+ (rozšíření pdo_sqlite, sqlite3, mbstring, openssl, fileinfo, curl, zip), Composer, Node.js
 
 ```bash
-# 1. Stažení projektu
-git clone https://github.com/...
-
-# 2. Instalace PHP závislostí
 composer install
-
-# 3. Instalace JS závislostí
-npm install
-
-# 4. Konfigurace prostředí
-cp .env.example .env
+cp .env.example .env            # výchozí databáze je SQLite
 php artisan key:generate
-
-# 5. Nastavení databáze v .env
-DB_DATABASE=sokol_caca
-DB_USERNAME=root
-DB_PASSWORD=
-
-# 6. Vytvoření databáze (Code-First migrace) + ukázková data
+touch database/database.sqlite  # PowerShell: New-Item database\database.sqlite
 php artisan migrate --seed
-# přihlášení: admin@admin.cz / password (hráči např. novak@caca.cz / password)
+npm install
+npm run build                   # nebo npm run dev
+php artisan serve
+```
 
-# 7. Sestavení frontendu
-npm run dev
+Přihlášení: `admin@admin.cz` / `password` (trenér), hráči např. `novak@caca.cz` / `password`.
 
-# nebo pro produkci
-npm run build
+Pokud `composer install` hlásí, že lock file neodpovídá `composer.json`, spusťte jednou `composer update "sokol/*" deptrac/deptrac`.
+
+Testy a kontrola vrstev:
+
+```bash
+php artisan test            # feature + unit testy
+composer test:controllers   # unit testy controllerů (tests-controllers/)
+composer deptrac            # kontrola závislostí mezi vrstvami
 ```
 
 ---

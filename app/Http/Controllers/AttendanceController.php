@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendanceRequest;
-use App\Services\AttendanceService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
 
 class AttendanceController extends Controller
 {
     public function __construct(
-        private readonly AttendanceService $attendance,
+        private readonly AttendanceServiceInterface $attendance,
     ) {}
 
     public function store(StoreAttendanceRequest $request)
     {
-        $this->attendance->vote($request->user(), $request->validated());
+        $this->attendance->vote($request->toData());
 
         $eventType = $request->isTrainingVote() ? 'trénink' : 'zápas';
 

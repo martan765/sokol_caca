@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +38,7 @@ class WeatherPageTest extends TestCase
             ],
         ])]);
 
-        $this->actingAs(User::factory()->create())->get(route('weather.index'))
+        $this->actingAs(UserFactory::new()->create())->get(route('weather.index'))
             ->assertOk()
             ->assertSee('6,5')
             ->assertSee('Jasno')
@@ -52,7 +52,7 @@ class WeatherPageTest extends TestCase
     {
         Http::fake(['api.open-meteo.com/*' => Http::response(null, 500)]);
 
-        $this->actingAs(User::factory()->create())->get(route('weather.index'))
+        $this->actingAs(UserFactory::new()->create())->get(route('weather.index'))
             ->assertOk()
             ->assertSee('Nepodařilo se načíst data o počasí.');
     }

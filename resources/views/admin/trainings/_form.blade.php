@@ -1,7 +1,7 @@
 {{-- Společná pole pro vytvoření i úpravu tréninku; $training je null při vytváření --}}
 <div class="mb-4">
     <label class="block text-sm font-medium text-gray-700">Datum a čas konání</label>
-    <input type="datetime-local" name="training_date" value="{{ old('training_date', $training?->training_date->format('Y-m-d\TH:i')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
+    <input type="datetime-local" name="training_date" value="{{ old('training_date', $training?->date->format('Y-m-d\TH:i')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
     <x-input-error :messages="$errors->get('training_date')" class="mt-2" />
 </div>
 

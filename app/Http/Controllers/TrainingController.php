@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AttendanceService;
-use App\Services\TrainingService;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\TrainingServiceInterface;
 
 /**
  * Veřejný přehled nadcházejících tréninků s hlasováním o účasti.
@@ -12,13 +12,13 @@ use App\Services\TrainingService;
 class TrainingController extends Controller
 {
     public function __construct(
-        private readonly TrainingService $trainings,
-        private readonly AttendanceService $attendance,
+        private readonly TrainingServiceInterface $trainings,
+        private readonly AttendanceServiceInterface $attendance,
     ) {}
 
     public function index()
     {
-        $trainings = $this->trainings->upcoming();
+        $trainings = $this->trainings->upcoming($this->currentUserId());
         $statuses  = $this->attendance->statuses();
 
         return view('trainings.index', compact('trainings', 'statuses'));

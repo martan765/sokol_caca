@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Sokol\Application\Abstraction\AccountServiceInterface;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(
+        private readonly AccountServiceInterface $accounts,
+    ) {}
+
     /**
      * Display the login view.
      */
@@ -36,7 +40,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        $this->accounts->logout();
 
         $request->session()->invalidate();
 

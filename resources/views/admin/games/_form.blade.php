@@ -4,7 +4,7 @@
     <select name="match_type_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
         <option value="">-- Vyber typ zápasu --</option>
         @foreach($gameTypes as $type)
-            <option value="{{ $type->id }}" @selected(old('match_type_id', $game?->match_type_id) == $type->id)>{{ $type->name }}</option>
+            <option value="{{ $type->id }}" @selected(old('match_type_id', $game?->gameTypeId) == $type->id)>{{ $type->name }}</option>
         @endforeach
     </select>
     <x-input-error :messages="$errors->get('match_type_id')" class="mt-2" />
@@ -12,19 +12,19 @@
 
 <div class="mb-4">
     <label class="block text-sm font-medium text-gray-700">Datum a čas konání</label>
-    <input type="datetime-local" name="game_date" value="{{ old('game_date', $game?->game_date->format('Y-m-d\TH:i')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
+    <input type="datetime-local" name="game_date" value="{{ old('game_date', $game?->date->format('Y-m-d\TH:i')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
     <x-input-error :messages="$errors->get('game_date')" class="mt-2" />
 </div>
 
 <div class="mb-4">
     <label class="block text-sm font-medium text-gray-700">Domácí</label>
-    <input type="text" name="home_team" value="{{ old('home_team', $game?->home_team) }}" maxlength="255" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
+    <input type="text" name="home_team" value="{{ old('home_team', $game?->homeTeam) }}" maxlength="255" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
     <x-input-error :messages="$errors->get('home_team')" class="mt-2" />
 </div>
 
 <div class="mb-4">
     <label class="block text-sm font-medium text-gray-700">Hosté</label>
-    <input type="text" name="away_team" value="{{ old('away_team', $game?->away_team) }}" maxlength="255" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
+    <input type="text" name="away_team" value="{{ old('away_team', $game?->awayTeam) }}" maxlength="255" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
     <x-input-error :messages="$errors->get('away_team')" class="mt-2" />
 </div>
 

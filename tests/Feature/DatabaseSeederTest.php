@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Game;
-use App\Models\Training;
-use App\Models\User;
-use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Sokol\Domain\Enums\Role;
+use Sokol\Infrastructure\Database\Seeders\UserSeeder;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Tests\TestCase;
 
 class DatabaseSeederTest extends TestCase
@@ -18,14 +19,14 @@ class DatabaseSeederTest extends TestCase
     {
         $this->seed();
 
-        $this->assertSame(1, User::where('role', User::ROLE_ADMIN)->count());
-        $this->assertSame(9, User::where('role', User::ROLE_PLAYER)->count());
-        $this->assertTrue(Hash::check(UserSeeder::PASSWORD, User::where('email', 'admin@admin.cz')->value('password')));
+        $this->assertSame(1, UserModel::where('role', Role::Admin->value)->count());
+        $this->assertSame(9, UserModel::where('role', Role::Player->value)->count());
+        $this->assertTrue(Hash::check(UserSeeder::PASSWORD, UserModel::where('email', 'admin@admin.cz')->value('password')));
 
         // 15 odehraných + 2 nadcházející tréninky, 9 odehraných + 1 nadcházející zápas
-        $this->assertSame(17, Training::count());
-        $this->assertSame(10, Game::count());
-        $this->assertSame(2, Training::where('training_date', '>=', now())->count());
+        $this->assertSame(17, TrainingModel::count());
+        $this->assertSame(10, GameModel::count());
+        $this->assertSame(2, TrainingModel::where('training_date', '>=', now())->count());
 
         $this->assertDatabaseCount('training_attendance', 127);
         $this->assertDatabaseCount('game_attendance', 72);
