@@ -1,5 +1,3 @@
-@use('App\View\Dates')
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
@@ -26,17 +24,17 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($trainings as $training)
-                            <tr class="{{ $training->isPast ? 'text-gray-400' : 'text-gray-700' }}">
+                            <tr class="{{ $training->training_date->isPast() ? 'text-gray-400' : 'text-gray-700' }}">
                                 <td class="px-4 py-3 whitespace-nowrap font-medium">
-                                    {{ Dates::translated($training->date, 'D d.m.Y H:i') }}
+                                    {{ $training->training_date->locale('cs')->translatedFormat('D d.m.Y H:i') }}
                                 </td>
                                 <td class="px-4 py-3">{{ $training->location }}</td>
                                 <td class="px-4 py-3 max-w-xs truncate">{{ $training->description }}</td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-end items-center gap-2">
-                                        <x-attendance-link :href="route('admin.trainings.attendance', $training->id)" />
-                                        <x-edit-link :href="route('admin.trainings.edit', $training->id)" />
-                                        <x-delete-button :action="route('admin.trainings.destroy', $training->id)" confirm="Opravdu chceš SMAZAT tento trénink?" />
+                                        <x-attendance-link :href="route('admin.trainings.attendance', $training)" />
+                                        <x-edit-link :href="route('admin.trainings.edit', $training)" />
+                                        <x-delete-button :action="route('admin.trainings.destroy', $training)" confirm="Opravdu chceš SMAZAT tento trénink?" />
                                     </div>
                                 </td>
                             </tr>

@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Sokol\Application\Abstraction\AccountServiceInterface;
-use Sokol\Application\Abstraction\UserServiceInterface;
 
 class RegisteredUserController extends Controller
 {
     public function __construct(
-        private readonly UserServiceInterface $users,
-        private readonly AccountServiceInterface $accounts,
+        private readonly UserService $users,
     ) {}
 
     /**
@@ -29,9 +28,9 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterUserRequest $request): RedirectResponse
     {
-        $user = $this->users->register($request->toData());
+        $user = $this->users->register($request->validated());
 
-        $this->accounts->loginById($user->id);
+        Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
     }

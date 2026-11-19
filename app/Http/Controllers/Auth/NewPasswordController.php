@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Support\PasswordResetMessages;
+use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Sokol\Application\Abstraction\UserServiceInterface;
-use Sokol\Domain\Enums\PasswordResetResult;
 
 class NewPasswordController extends Controller
 {
     public function __construct(
-        private readonly UserServiceInterface $users,
+        private readonly UserService $users,
     ) {}
 
     /**
@@ -38,14 +38,18 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $result = $this->users->resetPassword(
-            (string) $request->input('email'),
-            (string) $request->input('token'),
-            (string) $request->input('password'),
+        // Here we will attempt to reset the user's password. If it is successful we
+        // will update the password on an actual user model and persist it to the
+        // database. Otherwise we will parse the error and return the response.
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            fn (User $user) => $this->users->resetPassword($user, $request->password)
         );
-        $status = PasswordResetMessages::key($result);
 
-        return $result === PasswordResetResult::Reset
+        // If the password was successfully reset, we will redirect the user back to
+        // the application's home authenticated view. If there is an error we can
+        // redirect them back to where they came from with their error message.
+        return $status == Password::PASSWORD_RESET
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withInput($request->only('email'))
                         ->withErrors(['email' => __($status)]);

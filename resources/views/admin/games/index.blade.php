@@ -1,5 +1,3 @@
-@use('App\View\Dates')
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
@@ -28,19 +26,19 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($games as $game)
-                            <tr class="{{ $game->isPast ? 'text-gray-400' : 'text-gray-700' }}">
+                            <tr class="{{ $game->game_date->isPast() ? 'text-gray-400' : 'text-gray-700' }}">
                                 <td class="px-4 py-3 whitespace-nowrap font-medium">
-                                    {{ Dates::translated($game->date, 'D d.m.Y H:i') }}
+                                    {{ $game->game_date->locale('cs')->translatedFormat('D d.m.Y H:i') }}
                                 </td>
-                                <td class="px-4 py-3 font-semibold">{{ $game->homeTeam }} vs {{ $game->awayTeam }}</td>
-                                <td class="px-4 py-3">{{ $game->typeName }}</td>
+                                <td class="px-4 py-3 font-semibold">{{ $game->home_team }} vs {{ $game->away_team }}</td>
+                                <td class="px-4 py-3">{{ $game->type?->name }}</td>
                                 <td class="px-4 py-3">{{ $game->location }}</td>
                                 <td class="px-4 py-3 font-bold">{{ $game->result ?? '–' }}</td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-end items-center gap-2">
-                                        <x-attendance-link :href="route('admin.games.attendance', $game->id)" />
-                                        <x-edit-link :href="route('admin.games.edit', $game->id)" />
-                                        <x-delete-button :action="route('admin.games.destroy', $game->id)" confirm="Opravdu chceš SMAZAT tento zápas?" />
+                                        <x-attendance-link :href="route('admin.games.attendance', $game)" />
+                                        <x-edit-link :href="route('admin.games.edit', $game)" />
+                                        <x-delete-button :action="route('admin.games.destroy', $game)" confirm="Opravdu chceš SMAZAT tento zápas?" />
                                     </div>
                                 </td>
                             </tr>

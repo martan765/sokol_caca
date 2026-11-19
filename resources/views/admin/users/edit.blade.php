@@ -1,5 +1,3 @@
-@use('Sokol\Domain\Enums\Role')
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -10,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                <form action="{{ route('admin.users.update', $user) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -29,8 +27,8 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Role</label>
                         <select name="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500" required>
-                            <option value="{{ Role::Player->value }}" @selected(old('role', $user->role->value) === Role::Player->value)>Hráč</option>
-                            <option value="{{ Role::Admin->value }}" @selected(old('role', $user->role->value) === Role::Admin->value)>Trenér (admin)</option>
+                            <option value="{{ \App\Models\User::ROLE_PLAYER }}" @selected(old('role', $user->role) === \App\Models\User::ROLE_PLAYER)>Hráč</option>
+                            <option value="{{ \App\Models\User::ROLE_ADMIN }}" @selected(old('role', $user->role) === \App\Models\User::ROLE_ADMIN)>Trenér (admin)</option>
                         </select>
                         <x-input-error :messages="$errors->get('role')" class="mt-2" />
                     </div>

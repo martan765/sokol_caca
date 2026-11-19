@@ -1,9 +1,7 @@
-@use('App\View\Dates')
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $heading }}</h2>
-        <p class="text-sm text-gray-500 mt-1">{{ Dates::translated($date, 'l d.m.Y H:i') }}</p>
+        <p class="text-sm text-gray-500 mt-1">{{ $date->locale('cs')->translatedFormat('l d.m.Y H:i') }}</p>
     </x-slot>
 
     <div class="py-12 px-4">
@@ -24,8 +22,8 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($players as $player)
                                 @php
-                                    $att      = $current[$player->id] ?? null;
-                                    $selected = old("attendance.{$player->id}.status_id", $att?->statusId);
+                                    $att      = $current->get($player->id);
+                                    $selected = old("attendance.{$player->id}.status_id", $att?->status_id);
                                     $field    = "attendance[{$player->id}]";
                                 @endphp
                                 <tr>
@@ -37,7 +35,7 @@
                                                 Nevyplněno
                                             </label>
                                             @foreach($statuses as $status)
-                                                <label @class(['inline-flex items-center gap-1.5 font-semibold', 'text-green-700' => $status->isAttending, 'text-red-600' => $status->isNotAttending])>
+                                                <label @class(['inline-flex items-center gap-1.5 font-semibold', 'text-green-700' => $status->id == \App\Models\AttendanceStatus::ATTENDING, 'text-red-600' => $status->id == \App\Models\AttendanceStatus::NOT_ATTENDING])>
                                                     <input type="radio" name="{{ $field }}[status_id]" value="{{ $status->id }}" @checked($selected == $status->id) class="text-brand-600 focus:ring-brand-500">
                                                     {{ $status->name }}
                                                 </label>

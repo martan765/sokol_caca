@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('admin.games.update', $game->id) }}" method="POST">
+                <form action="{{ route('admin.games.update', $game) }}" method="POST">
                     @csrf
                     @method('PUT')
                     @include('admin.games._form')

@@ -22,13 +22,13 @@
                             <tr>
                                 <td class="px-4 py-3 font-medium whitespace-nowrap">
                                     {{ $user->name }}
-                                    @if($user->id === $currentUser?->id)
+                                    @if($user->is(auth()->user()))
                                         <span class="text-xs text-gray-400">(ty)</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">{{ $user->email }}</td>
                                 <td class="px-4 py-3">
-                                    @if($user->isAdmin)
+                                    @if($user->isAdmin())
                                         <span class="px-2 py-0.5 rounded bg-brand-100 text-brand-700 text-xs font-bold">Trenér</span>
                                     @else
                                         <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-xs font-bold">Hráč</span>
@@ -36,9 +36,9 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-end items-center gap-2">
-                                        <x-edit-link :href="route('admin.users.edit', $user->id)" />
-                                        @can('delete-user', $user->id)
-                                            <x-delete-button :action="route('admin.users.destroy', $user->id)" confirm="Opravdu chceš SMAZAT tohoto uživatele? Smaže se i jeho docházka." />
+                                        <x-edit-link :href="route('admin.users.edit', $user)" />
+                                        @can('delete', $user)
+                                            <x-delete-button :action="route('admin.users.destroy', $user)" confirm="Opravdu chceš SMAZAT tohoto uživatele? Smaže se i jeho docházka." />
                                         @endcan
                                     </div>
                                 </td>

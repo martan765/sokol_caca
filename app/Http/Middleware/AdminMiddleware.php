@@ -4,32 +4,23 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
-use Sokol\Application\Abstraction\UserServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    public function __construct(
-        private readonly UserServiceInterface $users,
-    ) {}
-
     public function handle(Request $request, Closure $next): Response
     {
-        $id   = Auth::id();
-        $user = $this->users->current($id === null ? null : (int) $id);
-
-        if ($user?->isAdmin) {
+        if ($request->user()?->isAdmin()) {
             // Každý záznam v logu během tohoto požadavku ponese, kdo akci provedl
-            Context::add('admin', $user->email);
+            Context::add('admin', $request->user()->email);
 
             return $next($request);
         }
 
         Log::warning('Pokus o přístup do administrace bez oprávnění', [
-            'user' => $user?->email,
+            'user' => $request->user()?->email,
             'url'  => $request->fullUrl(),
         ]);
 

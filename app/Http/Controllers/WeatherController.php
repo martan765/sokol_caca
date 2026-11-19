@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Sokol\Application\Abstraction\WeatherServiceInterface;
+use App\Services\WeatherService;
 
 class WeatherController extends Controller
 {
-    public function index(WeatherServiceInterface $weatherService)
+    public function index(WeatherService $weatherService)
     {
-        $weather = $weatherService->forecast();
+        $weather = $weatherService->getWeather();
 
         return view('weather', compact('weather'));
     }

@@ -5,16 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Sokol\Application\Abstraction\UserServiceInterface;
 
 class ConfirmablePasswordController extends Controller
 {
-    public function __construct(
-        private readonly UserServiceInterface $users,
-    ) {}
-
     /**
      * Show the confirm password view.
      */
@@ -28,7 +24,10 @@ class ConfirmablePasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        if (! $this->users->checkPassword($this->currentUserId(), (string) $request->input('password'))) {
+        if (! Auth::guard('web')->validate([
+            'email' => $request->user()->email,
+            'password' => $request->password,
+        ])) {
             throw ValidationException::withMessages([
                 'password' => __('auth.password'),
             ]);

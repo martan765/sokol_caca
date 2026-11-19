@@ -1,5 +1,3 @@
-@use('App\View\Dates')
-
 @php
     // WMO kód počasí -> [popis, ikona]
     $describe = fn (?int $code, bool $isDay = true) => match (true) {
@@ -25,12 +23,15 @@
 
     <div class="py-8 px-4">
         <div class="max-w-7xl mx-auto space-y-6">
-            @if($weather)
+            @if(!empty($weather['current']))
                 @php
-                    $current = $weather->current;
-                    $sunrise = $weather->sunrise;
-                    $sunset  = $weather->sunset;
-                    [$label, $icon] = $describe($current->weatherCode, $weather->isDay);
+                    $current = $weather['current'];
+                    $daily   = $weather['daily'] ?? [];
+                    $now     = \Carbon\Carbon::parse($current['time'] ?? now());
+                    $sunrise = isset($daily['sunrise'][0]) ? \Carbon\Carbon::parse($daily['sunrise'][0]) : null;
+                    $sunset  = isset($daily['sunset'][0]) ? \Carbon\Carbon::parse($daily['sunset'][0]) : null;
+                    $isDay   = ! $sunrise || ! $sunset || $now->between($sunrise, $sunset);
+                    [$label, $icon] = $describe($current['weather_code'] ?? null, $isDay);
                 @endphp
 
                 <!-- Aktuální podmínky -->
@@ -42,10 +43,10 @@
                                 <span class="text-6xl sm:text-7xl leading-none" aria-hidden="true">{{ $icon }}</span>
                                 <div>
                                     <div class="text-5xl sm:text-6xl font-black leading-none">
-                                        {{ $fmt($current->temperature, 1) }}<span class="text-2xl font-bold text-brand-200 ml-1">°C</span>
+                                        {{ $fmt($current['temperature_2m'] ?? null, 1) }}<span class="text-2xl font-bold text-brand-200 ml-1">°C</span>
                                     </div>
                                     <div class="mt-2 text-lg font-semibold">{{ $label }}</div>
-                                    <div class="text-sm text-brand-100">Pocitově {{ $fmt($current->apparentTemperature, 1) }} °C</div>
+                                    <div class="text-sm text-brand-100">Pocitově {{ $fmt($current['apparent_temperature'] ?? null, 1) }} °C</div>
                                 </div>
                             </div>
                         </div>
@@ -53,11 +54,11 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div class="rounded-xl bg-white/10 ring-1 ring-inset ring-white/15 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-brand-200">Vítr</div>
-                                <div class="mt-1 text-2xl font-black">{{ $fmt($current->windSpeed, 1) }} <span class="text-sm font-bold text-brand-200">km/h</span></div>
+                                <div class="mt-1 text-2xl font-black">{{ $fmt($current['wind_speed_10m'] ?? null, 1) }} <span class="text-sm font-bold text-brand-200">km/h</span></div>
                             </div>
                             <div class="rounded-xl bg-white/10 ring-1 ring-inset ring-white/15 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-brand-200">Srážky teď</div>
-                                <div class="mt-1 text-2xl font-black">{{ $fmt($current->precipitation, 1) }} <span class="text-sm font-bold text-brand-200">mm</span></div>
+                                <div class="mt-1 text-2xl font-black">{{ $fmt($current['precipitation'] ?? null, 1) }} <span class="text-sm font-bold text-brand-200">mm</span></div>
                             </div>
                             <div class="rounded-xl bg-white/10 ring-1 ring-inset ring-white/15 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-brand-200">Východ slunce</div>
@@ -72,7 +73,7 @@
                 </div>
 
                 <!-- Předpověď na 7 dní -->
-                @if(! empty($weather->days))
+                @if(!empty($daily['time']))
                     <div>
                         <h3 class="flex items-center gap-2 text-base font-bold text-gray-700 mb-3 px-1 uppercase tracking-wider">
                             <span class="w-1.5 h-5 rounded-full bg-brand-600"></span>
@@ -80,34 +81,34 @@
                         </h3>
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-                            @foreach($weather->days as $day)
+                            @foreach($daily['time'] as $i => $day)
                                 @php
-                                    $date     = $day->date;
-                                    $dayName  = $day->isToday ? 'Dnes' : ($day->isTomorrow ? 'Zítra' : Dates::translated($date, 'l'));
-                                    $rainProb = $day->precipitationProbability;
-                                    $rainy    = $day->isRainy();
-                                    [$dayLabel, $dayIcon] = $describe($day->weatherCode);
+                                    $date     = \Carbon\Carbon::parse($day)->locale('cs');
+                                    $dayName  = $date->isToday() ? 'Dnes' : ($date->isTomorrow() ? 'Zítra' : $date->translatedFormat('l'));
+                                    $rainProb = $daily['precipitation_probability_max'][$i] ?? null;
+                                    $rainy    = $rainProb !== null && $rainProb >= 60;
+                                    [$dayLabel, $dayIcon] = $describe($daily['weather_code'][$i] ?? null);
                                 @endphp
                                 <div @class([
                                     'rounded-xl border p-4 text-center shadow-sm',
                                     'bg-white border-gray-200' => ! $rainy,
                                     'bg-sky-50 border-sky-200' => $rainy,
-                                    'ring-2 ring-brand-500' => $day->isToday,
+                                    'ring-2 ring-brand-500' => $date->isToday(),
                                 ])>
                                     <div class="text-sm font-bold text-gray-800 capitalize">{{ $dayName }}</div>
                                     <div class="text-xs text-gray-400">{{ $date->format('d.m.') }}</div>
                                     <div class="my-3 text-4xl leading-none" title="{{ $dayLabel }}" aria-hidden="true">{{ $dayIcon }}</div>
                                     <div class="text-xs text-gray-500 mb-2">{{ $dayLabel }}</div>
                                     <div class="font-black text-gray-900">
-                                        {{ $fmt($day->temperatureMax) }}°
-                                        <span class="font-semibold text-gray-400">/ {{ $fmt($day->temperatureMin) }}°</span>
+                                        {{ $fmt($daily['temperature_2m_max'][$i] ?? null) }}°
+                                        <span class="font-semibold text-gray-400">/ {{ $fmt($daily['temperature_2m_min'][$i] ?? null) }}°</span>
                                     </div>
                                     @if($rainProb !== null)
                                         <div class="mt-3">
                                             <div class="flex items-center justify-center gap-1 text-xs font-bold {{ $rainy ? 'text-sky-700' : 'text-gray-500' }}">
                                                 💧 {{ $rainProb }} %
-                                                @if(($day->precipitationSum ?? 0) > 0)
-                                                    <span class="font-normal text-gray-400">· {{ $fmt($day->precipitationSum, 1) }} mm</span>
+                                                @if(($daily['precipitation_sum'][$i] ?? 0) > 0)
+                                                    <span class="font-normal text-gray-400">· {{ $fmt($daily['precipitation_sum'][$i], 1) }} mm</span>
                                                 @endif
                                             </div>
                                             <div class="mt-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">

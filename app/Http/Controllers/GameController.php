@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Sokol\Application\Abstraction\AttendanceServiceInterface;
-use Sokol\Application\Abstraction\GameServiceInterface;
+use App\Services\AttendanceService;
+use App\Services\GameService;
 
 /**
  * Veřejný přehled nadcházejících zápasů s hlasováním o účasti.
@@ -12,13 +12,13 @@ use Sokol\Application\Abstraction\GameServiceInterface;
 class GameController extends Controller
 {
     public function __construct(
-        private readonly GameServiceInterface $games,
-        private readonly AttendanceServiceInterface $attendance,
+        private readonly GameService $games,
+        private readonly AttendanceService $attendance,
     ) {}
 
     public function index()
     {
-        $games    = $this->games->upcoming($this->currentUserId());
+        $games    = $this->games->upcoming();
         $statuses = $this->attendance->statuses();
 
         return view('games.index', compact('games', 'statuses'));

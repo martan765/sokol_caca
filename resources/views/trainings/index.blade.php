@@ -17,12 +17,12 @@
 
                     <div class="p-5 border-b border-gray-100">
                         <div class="flex items-start gap-4">
-                            <x-date-tile :date="$training->date" />
+                            <x-date-tile :date="$training->training_date" />
 
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $training->date->format('H:i') }}</span>
-                                    <x-countdown :date="$training->date" />
+                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $training->training_date->format('H:i') }}</span>
+                                    <x-countdown :date="$training->training_date" />
                                 </div>
                                 <div class="mt-2 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
                                     <svg class="w-4 h-4 shrink-0 text-brand-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -32,8 +32,8 @@
                                 </div>
                             </div>
 
-                            @if($currentUser?->isAdmin)
-                                <x-edit-link :href="route('admin.trainings.edit', $training->id)" />
+                            @if(auth()->user()->isAdmin())
+                                <x-edit-link :href="route('admin.trainings.edit', $training)" />
                             @endif
                         </div>
 
@@ -42,7 +42,7 @@
                         @endif
                     </div>
 
-                    <x-attendance-vote :voters="$training->voters" :my-status-id="$training->myStatusId" field="training_id" :event-id="$training->id" :statuses="$statuses" />
+                    <x-attendance-vote :users="$training->users" field="training_id" :event-id="$training->id" :statuses="$statuses" />
                 </div>
             @empty
                 <div class="col-span-full text-center py-10 text-gray-400 italic bg-white rounded-xl border">Zatím žádné naplánované tréninky.</div>

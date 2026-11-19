@@ -4,47 +4,46 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
-use App\Http\Support\Paging;
+use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Gate;
 use Psr\Log\LoggerInterface;
-use Sokol\Application\Abstraction\UserServiceInterface;
 
 class UserController extends Controller
 {
     public function __construct(
-        private readonly UserServiceInterface $users,
+        private readonly UserService $users,
         private readonly LoggerInterface $logger,
     ) {}
 
     public function index()
     {
-        $users = Paging::toPaginator($this->users->paginated(Paging::currentPage()));
+        $users = $this->users->paginated();
 
         return view('admin.users.index', compact('users'));
     }
 
-    public function edit(int $user)
+    public function edit(User $user)
     {
-        return view('admin.users.edit', ['user' => $this->users->get($user)]);
+        return view('admin.users.edit', compact('user'));
     }
 
-    public function update(UserRequest $request, int $user)
+    public function update(UserRequest $request, User $user)
     {
-        $changes = $this->users->updateByAdmin($user, $request->toData());
+        $this->users->updateByAdmin($user, $request->validated());
 
-        $this->logger->info('Uživatel upraven', ['user_id' => $user, 'changes' => $changes]);
+        $this->logger->info('Uživatel upraven', ['user_id' => $user->id, 'changes' => $user->getChanges()]);
 
         return redirect()->route('admin.users.index')->with('success', 'Uživatel byl upraven.');
     }
 
-    public function destroy(int $user)
+    public function destroy(User $user)
     {
-        $this->users->get($user);
-        Gate::authorize('delete-user', $user);
+        Gate::authorize('delete', $user);
 
-        $deleted = $this->users->delete($user);
+        $this->users->delete($user);
 
-        $this->logger->warning('Uživatel smazán', ['user_id' => $deleted->id, 'email' => $deleted->email]);
+        $this->logger->warning('Uživatel smazán', ['user_id' => $user->id, 'email' => $user->email]);
 
         return redirect()->route('admin.users.index')->with('success', 'Uživatel byl smazán.');
     }

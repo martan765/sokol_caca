@@ -4,26 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileDeleteRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Sokol\Application\Abstraction\AccountServiceInterface;
-use Sokol\Application\Abstraction\UserServiceInterface;
 
 class ProfileController extends Controller
 {
     public function __construct(
-        private readonly UserServiceInterface $users,
-        private readonly AccountServiceInterface $accounts,
+        private readonly UserService $users,
     ) {}
 
     /**
      * Display the user's profile form.
      */
-    public function edit(): View
+    public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $this->users->get($this->currentUserId()),
+            'user' => $request->user(),
         ]);
     }
 
@@ -32,7 +32,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $this->users->updateProfile($this->currentUserId(), $request->toData());
+        $this->users->updateProfile($request->user(), $request->validated());
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -42,11 +42,11 @@ class ProfileController extends Controller
      */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
-        $userId = $this->currentUserId();
+        $user = $request->user();
 
-        $this->accounts->logout();
+        Auth::logout();
 
-        $this->users->delete($userId);
+        $this->users->delete($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

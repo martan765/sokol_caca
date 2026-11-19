@@ -2,20 +2,19 @@
 
 namespace App\Policies;
 
-use Illuminate\Contracts\Auth\Authenticatable;
-use Sokol\Application\Abstraction\UserServiceInterface;
+use App\Models\User;
 
+/**
+ * Oprávnění při správě uživatelů v administraci.
+ * Laravel policy najde automaticky podle názvu (User -> UserPolicy).
+ */
 class UserPolicy
 {
-    public function __construct(
-        private readonly UserServiceInterface $users,
-    ) {}
-
     /**
      * Trenér nesmí smazat sám sebe – tým by mohl zůstat bez admina.
      */
-    public function delete(Authenticatable $actor, int|string $targetId): bool
+    public function delete(User $actor, User $target): bool
     {
-        return $this->users->canDelete((int) $actor->getAuthIdentifier(), (int) $targetId);
+        return $actor->isAdmin() && ! $actor->is($target);
     }
 }

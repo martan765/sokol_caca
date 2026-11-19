@@ -1,10 +1,8 @@
 @props(['date'])
 
-@use('App\View\Dates')
-
 {{-- Kolik zbývá do akce: Dnes / Zítra / za 3 dny / za 12 dní --}}
 @php
-    $days  = Dates::daysUntil($date);
+    $days  = (int) now()->startOfDay()->diffInDays($date->copy()->startOfDay());
     $label = match (true) {
         $days === 0 => 'Dnes',
         $days === 1 => 'Zítra',

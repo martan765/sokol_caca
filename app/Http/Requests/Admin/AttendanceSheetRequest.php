@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Rules\ExistingAttendanceStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use Sokol\Application\Dto\AttendanceSheetRow;
 
 /**
  * Docházka celé akce, kterou zapisuje trenér: attendance[user_id][status_id|note].
@@ -20,23 +18,8 @@ class AttendanceSheetRequest extends FormRequest
     {
         return [
             'attendance'             => ['array'],
-            'attendance.*.status_id' => ['nullable', 'integer', new ExistingAttendanceStatus()],
+            'attendance.*.status_id' => ['nullable', 'integer', 'exists:attendance_statuses,id'],
             'attendance.*.note'      => ['nullable', 'string', 'max:255'],
         ];
-    }
-
-    public function rows(): array
-    {
-        $rows = [];
-
-        foreach ($this->validated('attendance', []) as $userId => $row) {
-            $rows[] = new AttendanceSheetRow(
-                (int) $userId,
-                empty($row['status_id']) ? null : (int) $row['status_id'],
-                $row['note'] ?? null,
-            );
-        }
-
-        return $rows;
     }
 }

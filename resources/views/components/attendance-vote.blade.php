@@ -1,15 +1,12 @@
-@props(['voters', 'myStatusId' => null, 'field', 'eventId', 'statuses' => []])
-
-@use('Sokol\Domain\Enums\AttendanceStatusId')
+@props(['users', 'field', 'eventId', 'statuses' => collect()])
 
 @php
     // Názvy stavů lze přejmenovat v administraci, barvy jsou svázané s pevnými ID
-    $labels    = array_column($statuses, 'name', 'id');
-    $attending = AttendanceStatusId::Attending->value;
-    $absent    = AttendanceStatusId::NotAttending->value;
+    $labels = $statuses->pluck('name', 'id');
+    $currentStatus = $users->firstWhere('id', auth()->id())?->pivot->status_id;
     $options = [
-        $attending => ['label' => $labels[$attending] ?? 'Budu',   'voters' => $voters[$attending] ?? [], 'text' => 'text-green-600', 'bg' => 'bg-green-50', 'dot' => 'border-green-500 bg-green-500', 'chip' => 'bg-green-100 text-green-700 border-green-200'],
-        $absent    => ['label' => $labels[$absent] ?? 'Nebudu',    'voters' => $voters[$absent] ?? [],    'text' => 'text-red-600',   'bg' => 'bg-red-50',   'dot' => 'border-red-500 bg-red-500',     'chip' => 'bg-red-100 text-red-700 border-red-200'],
+        1 => ['label' => $labels[1] ?? 'Budu',   'voters' => $users->where('pivot.status_id', 1), 'text' => 'text-green-600', 'bg' => 'bg-green-50', 'dot' => 'border-green-500 bg-green-500', 'chip' => 'bg-green-100 text-green-700 border-green-200'],
+        2 => ['label' => $labels[2] ?? 'Nebudu', 'voters' => $users->where('pivot.status_id', 2), 'text' => 'text-red-600',   'bg' => 'bg-red-50',   'dot' => 'border-red-500 bg-red-500',     'chip' => 'bg-red-100 text-red-700 border-red-200'],
     ];
 @endphp
 
@@ -17,7 +14,7 @@
     <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Tvoje účast</div>
 
     @foreach($options as $status => $opt)
-        @php $selected = $myStatusId == $status; @endphp
+        @php $selected = $currentStatus == $status; @endphp
 
         <div class="{{ $loop->last ? '' : 'mb-6' }}">
             <form action="{{ route('attendance.store') }}" method="POST">
@@ -31,11 +28,11 @@
                         </div>
                         <span class="ml-3 font-semibold {{ $selected ? $opt['text'] : 'text-gray-700' }}">{{ $opt['label'] }}</span>
                     </div>
-                    <span class="font-bold {{ $opt['text'] }}">{{ count($opt['voters']) }}</span>
+                    <span class="font-bold {{ $opt['text'] }}">{{ $opt['voters']->count() }}</span>
                 </button>
             </form>
 
-            @if(! empty($opt['voters']))
+            @if($opt['voters']->isNotEmpty())
                 <details class="px-3 mt-2">
                     <summary class="text-[10px] font-bold text-gray-400 cursor-pointer hover:text-gray-600 transition">Zobrazit jména</summary>
                     <div class="flex flex-wrap gap-1 mt-2">

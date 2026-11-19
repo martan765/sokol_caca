@@ -3,30 +3,14 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "src/*",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
-        "sokol/application": "^1.0",
-        "sokol/domain": "^1.0",
-        "sokol/infrastructure": "^1.0"
+        "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
-        "deptrac/deptrac": "^2.0 || ^3.0",
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
@@ -45,8 +29,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/",
-            "Sokol\\ControllerTests\\": "tests-controllers/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -83,12 +66,6 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ],
-        "deptrac": [
-            "@php vendor/bin/deptrac analyse --no-progress"
-        ],
-        "test:controllers": [
-            "@php vendor/bin/phpunit -c tests-controllers/phpunit.xml"
         ]
     },
     "extra": {

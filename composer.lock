@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be3f35ece1f2677c2cb92b318bc64a01",
+    "content-hash": "bdc6d92507d397adf1c269ed49ec424d",
     "packages": [
         {
             "name": "brick/math",
@@ -3291,103 +3291,6 @@
             "time": "2025-12-14T04:43:48+00:00"
         },
         {
-            "name": "sokol/application",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "src/Application",
-                "reference": "ae56012614fdd978ffcef59ff90339ece2f177d3"
-            },
-            "require": {
-                "php": "^8.2",
-                "sokol/domain": "^1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Sokol\\Application\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "sokol/domain",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "src/Domain",
-                "reference": "5216895a8f6e7927867d233843dfc58c2d8e6745"
-            },
-            "require": {
-                "php": "^8.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Sokol\\Domain\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "sokol/infrastructure",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "src/Infrastructure",
-                "reference": "6a0172ffe76e9713d2993bef5f6844f4dd2b4a5a"
-            },
-            "require": {
-                "illuminate/auth": "^12.0",
-                "illuminate/cache": "^12.0",
-                "illuminate/contracts": "^12.0",
-                "illuminate/database": "^12.0",
-                "illuminate/events": "^12.0",
-                "illuminate/hashing": "^12.0",
-                "illuminate/http": "^12.0",
-                "illuminate/log": "^12.0",
-                "illuminate/notifications": "^12.0",
-                "illuminate/support": "^12.0",
-                "php": "^8.2",
-                "sokol/domain": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Sokol\\Infrastructure\\InfrastructureServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Sokol\\Infrastructure\\": ""
-                },
-                "exclude-from-classmap": [
-                    "Database/Migrations/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "symfony/clock",
             "version": "v7.4.0",
             "source": {
@@ -6103,54 +6006,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "deptrac/deptrac",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/deptrac/deptrac.git",
-                "reference": "605ee322f273ade1727f5ff2db3b47566140f4bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/deptrac/deptrac/zipball/605ee322f273ade1727f5ff2db3b47566140f4bf",
-                "reference": "605ee322f273ade1727f5ff2db3b47566140f4bf",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^8.1"
-            },
-            "suggest": {
-                "ext-dom": "For using the JUnit output formatter"
-            },
-            "bin": [
-                "bin/deptrac",
-                "deptrac.phar"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Deptrac\\Deptrac\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Deptrac is a static code analysis tool that helps to enforce rules for dependencies between software layers.",
-            "keywords": [
-                "static analysis"
-            ],
-            "support": {
-                "issues": "https://github.com/deptrac/deptrac/issues",
-                "source": "https://github.com/deptrac/deptrac/tree/3.0.0"
-            },
-            "time": "2025-02-17T08:20:48+00:00"
-        },
         {
             "name": "fakerphp/faker",
             "version": "v1.24.1",

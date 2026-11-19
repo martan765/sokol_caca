@@ -15,13 +15,13 @@
 
                     <div class="p-5 border-b border-gray-100">
                         <div class="flex items-start gap-4">
-                            <x-date-tile :date="$game->date" />
+                            <x-date-tile :date="$game->game_date" />
 
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $game->date->format('H:i') }}</span>
-                                    <x-countdown :date="$game->date" />
-                                    @if($game->isHome)
+                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $game->game_date->format('H:i') }}</span>
+                                    <x-countdown :date="$game->game_date" />
+                                    @if($game->isHome())
                                         <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-200">Doma</span>
                                     @else
                                         <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-white text-gray-600 ring-1 ring-inset ring-gray-300">Venku</span>
@@ -29,8 +29,8 @@
                                 </div>
 
                                 <div class="mt-2 text-base font-bold text-gray-800">
-                                    @foreach([[$game->homeTeam, $game->homeIsOurs], [$game->awayTeam, $game->awayIsOurs]] as [$team, $isOurs])
-                                        <span @class(['text-brand-700' => $isOurs])>{{ $team }}</span>
+                                    @foreach([$game->home_team, $game->away_team] as $team)
+                                        <span @class(['text-brand-700' => $game->isOurTeam($team)])>{{ $team }}</span>
                                         @if($loop->first) <span class="text-gray-400 font-normal mx-1">vs</span> @endif
                                     @endforeach
                                 </div>
@@ -42,20 +42,20 @@
                                         </svg>
                                         <span class="truncate">{{ $game->location }}</span>
                                     @endif
-                                    @if($game->typeName)
+                                    @if($game->type)
                                         <span class="text-gray-300">·</span>
-                                        <span class="truncate">{{ $game->typeName }}</span>
+                                        <span class="truncate">{{ $game->type->name }}</span>
                                     @endif
                                 </div>
                             </div>
 
-                            @if($currentUser?->isAdmin)
-                                <x-edit-link :href="route('admin.games.edit', $game->id)" />
+                            @if(auth()->user()->isAdmin())
+                                <x-edit-link :href="route('admin.games.edit', $game)" />
                             @endif
                         </div>
                     </div>
 
-                    <x-attendance-vote :voters="$game->voters" :my-status-id="$game->myStatusId" field="game_id" :event-id="$game->id" :statuses="$statuses" />
+                    <x-attendance-vote :users="$game->users" field="game_id" :event-id="$game->id" :statuses="$statuses" />
                 </div>
             @empty
                 <div class="col-span-full text-center py-10 text-gray-400 italic bg-white rounded-xl border">Žádné zápasy.</div>

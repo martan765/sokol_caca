@@ -3,10 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Rules\NoScheduleConflict;
-use DateTimeImmutable;
 use Illuminate\Foundation\Http\FormRequest;
-use Sokol\Application\Dto\TrainingData;
-use Sokol\Domain\Enums\EventType;
 
 /**
  * Validace pro vytvoření i úpravu tréninku.
@@ -20,21 +17,11 @@ class TrainingRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('training');
-
         return [
-            'training_date' => ['bail', 'required', 'date', app(NoScheduleConflict::class)->ignoring($id === null ? null : (int) $id, EventType::Training)],
+            // Při úpravě je v routě upravovaný trénink, při vytvoření null
+            'training_date' => ['bail', 'required', 'date', app(NoScheduleConflict::class)->ignoring($this->route('training'))],
             'location'      => ['required', 'string', 'max:255'],
             'description'   => ['nullable', 'string'],
         ];
-    }
-
-    public function toData(): TrainingData
-    {
-        return new TrainingData(
-            new DateTimeImmutable($this->validated('training_date')),
-            $this->validated('location'),
-            $this->validated('description'),
-        );
     }
 }

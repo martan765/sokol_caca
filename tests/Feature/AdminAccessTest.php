@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Database\Factories\UserFactory;
+use App\Models\Game;
+use App\Models\Training;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
-use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -19,7 +19,7 @@ class AdminAccessTest extends TestCase
 
     public function test_player_cannot_access_admin_pages(): void
     {
-        $player = UserFactory::new()->create();
+        $player = User::factory()->create();
 
         $this->actingAs($player)->get(route('admin.trainings.create'))
             ->assertRedirect(route('dashboard'))
@@ -31,8 +31,8 @@ class AdminAccessTest extends TestCase
 
     public function test_player_cannot_create_or_delete_events(): void
     {
-        $player   = UserFactory::new()->create();
-        $training = TrainingModel::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
+        $player   = User::factory()->create();
+        $training = Training::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
 
         $this->actingAs($player)->post(route('admin.trainings.store'), [
             'training_date' => now()->addDays(2)->toDateTimeString(),
@@ -50,14 +50,14 @@ class AdminAccessTest extends TestCase
 
     public function test_player_receives_403_on_json_request(): void
     {
-        $player = UserFactory::new()->create();
+        $player = User::factory()->create();
 
         $this->actingAs($player)->getJson(route('admin.games.create'))->assertForbidden();
     }
 
     public function test_admin_can_manage_trainings_and_games(): void
     {
-        $admin = UserFactory::new()->admin()->create();
+        $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)->get(route('admin.trainings.create'))->assertOk();
         $this->actingAs($admin)->get(route('admin.games.create'))->assertOk();
@@ -78,7 +78,7 @@ class AdminAccessTest extends TestCase
         $this->actingAs($admin)->get(route('admin.trainings.index'))->assertOk()->assertSee('Hřiště Částkov');
         $this->actingAs($admin)->get(route('admin.games.index'))->assertOk()->assertSee('Částkov vs Havřice');
 
-        $game = GameModel::firstOrFail();
+        $game = Game::firstOrFail();
         $this->actingAs($admin)->delete(route('admin.games.destroy', $game))->assertRedirect(route('admin.games.index'));
 
         $this->assertDatabaseCount('trainings', 1);
@@ -87,9 +87,9 @@ class AdminAccessTest extends TestCase
 
     public function test_admin_can_edit_training(): void
     {
-        $admin    = UserFactory::new()->admin()->create();
+        $admin    = User::factory()->admin()->create();
         $at       = now()->addDays(2)->setTime(17, 30);
-        $training = TrainingModel::create(['training_date' => $at, 'location' => 'Hřiště']);
+        $training = Training::create(['training_date' => $at, 'location' => 'Hřiště']);
 
         $this->actingAs($admin)->get(route('admin.trainings.edit', $training))
             ->assertOk()
@@ -109,8 +109,8 @@ class AdminAccessTest extends TestCase
 
     public function test_admin_can_edit_game_and_fill_in_result(): void
     {
-        $admin = UserFactory::new()->admin()->create();
-        $game  = GameModel::create([
+        $admin = User::factory()->admin()->create();
+        $game  = Game::create([
             'match_type_id' => 1, 'home_team' => 'A', 'away_team' => 'B', 'location' => 'X', 'game_date' => now()->subDay(),
         ]);
 
@@ -130,11 +130,11 @@ class AdminAccessTest extends TestCase
 
     public function test_dashboards_render(): void
     {
-        $training = TrainingModel::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
-        $player   = UserFactory::new()->create();
+        $training = Training::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
+        $player   = User::factory()->create();
         $player->trainings()->attach($training->id, ['status_id' => 1]);
 
         $this->actingAs($player)->get(route('dashboard'))->assertOk()->assertSee('100%');
-        $this->actingAs(UserFactory::new()->admin()->create())->get(route('dashboard'))->assertOk()->assertSee($player->name);
+        $this->actingAs(User::factory()->admin()->create())->get(route('dashboard'))->assertOk()->assertSee($player->name);
     }
 }
