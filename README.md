@@ -139,7 +139,11 @@ php artisan serve
 
 Přihlášení: `admin@admin.cz` / `password` (trenér), hráči např. `novak@caca.cz` / `password`.
 
-Pokud `composer install` hlásí, že lock file neodpovídá `composer.json`, spusťte jednou `composer update "sokol/*" deptrac/deptrac`.
+Vrstvy v `src/` jsou lokální Composer balíčky (`sokol/domain`, `sokol/application`, `sokol/infrastructure`). `composer install` je propojí do `vendor/sokol/` jako symlinky (na Windows junctiony) na složky v `src/`, proto:
+- po každém stažení nebo `git pull` spusťte `composer install`,
+- projekt předávejte přes git nebo jako zip **bez** složky `vendor/`, zkopírované odkazy na jiném počítači nefungují.
+
+**Chyba `Target class [Sokol\...] does not exist`** znamená, že balíčky `sokol/*` nejsou ve `vendor/`. Spusťte `composer install`. Pokud to nepomůže (lock file neodpovídá `composer.json`), spusťte `composer update "sokol/*" deptrac/deptrac` a pak `php artisan optimize:clear`.
 
 Testy a kontrola vrstev:
 
