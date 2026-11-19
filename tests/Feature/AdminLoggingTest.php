@@ -3,15 +3,15 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Admin;
-use App\Models\Game;
-use App\Models\Training;
-use App\Models\User;
+use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\GameModel;
+use Sokol\Infrastructure\Persistence\Eloquent\Models\TrainingModel;
 use Tests\TestCase;
 
 class AdminLoggingTest extends TestCase
@@ -37,8 +37,8 @@ class AdminLoggingTest extends TestCase
     public function test_training_changes_are_logged_with_admin_context(): void
     {
         $logger   = $this->spyLoggerFor(Admin\TrainingController::class);
-        $admin    = User::factory()->admin()->create();
-        $training = Training::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
+        $admin    = UserFactory::new()->admin()->create();
+        $training = TrainingModel::create(['training_date' => now()->addDay(), 'location' => 'Hřiště']);
 
         $this->actingAs($admin)->put(route('admin.trainings.update', $training), [
             'training_date' => $training->training_date->toDateTimeString(),
@@ -57,8 +57,8 @@ class AdminLoggingTest extends TestCase
     public function test_refused_game_type_deletion_is_logged(): void
     {
         $logger = $this->spyLoggerFor(Admin\GameTypeController::class);
-        $admin  = User::factory()->admin()->create();
-        $game   = Game::create(['match_type_id' => 1, 'home_team' => 'A', 'away_team' => 'B', 'game_date' => now()->addDay()]);
+        $admin  = UserFactory::new()->admin()->create();
+        $game   = GameModel::create(['match_type_id' => 1, 'home_team' => 'A', 'away_team' => 'B', 'game_date' => now()->addDay()]);
 
         $this->actingAs($admin)->delete(route('admin.game-types.destroy', $game->match_type_id));
 

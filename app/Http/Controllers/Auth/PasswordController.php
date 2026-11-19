@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
-use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class PasswordController extends Controller
 {
     public function __construct(
-        private readonly UserService $users,
+        private readonly UserServiceInterface $users,
     ) {}
 
     /**
@@ -18,7 +18,7 @@ class PasswordController extends Controller
      */
     public function update(UpdatePasswordRequest $request): RedirectResponse
     {
-        $this->users->changePassword($request->user(), $request->validated('password'));
+        $this->users->changePassword($this->currentUserId(), $request->validated('password'));
 
         return back()->with('status', 'password-updated');
     }

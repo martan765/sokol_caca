@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
+use App\Rules\UniqueEmail;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Sokol\Application\Dto\UpdateProfileData;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -23,8 +24,13 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                new UniqueEmail((int) Auth::id()),
             ],
         ];
+    }
+
+    public function toData(): UpdateProfileData
+    {
+        return new UpdateProfileData($this->validated('name'), $this->validated('email'));
     }
 }

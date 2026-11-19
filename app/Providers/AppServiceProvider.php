@@ -3,37 +3,51 @@
 namespace App\Providers;
 
 use App\Http\Controllers\Admin;
-use App\Repositories\Contracts\AttendanceRepositoryInterface;
-use App\Repositories\Contracts\AttendanceStatusRepositoryInterface;
-use App\Repositories\Contracts\GameRepositoryInterface;
-use App\Repositories\Contracts\GameTypeRepositoryInterface;
-use App\Repositories\Contracts\TrainingRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Repositories\Eloquent\AttendanceRepository;
-use App\Repositories\Eloquent\AttendanceStatusRepository;
-use App\Repositories\Eloquent\GameRepository;
-use App\Repositories\Eloquent\GameTypeRepository;
-use App\Repositories\Eloquent\TrainingRepository;
-use App\Repositories\Eloquent\UserRepository;
+use App\Policies\UserPolicy;
+use App\View\Composers\CurrentUserComposer;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
+use Sokol\Application\Abstraction\AccountServiceInterface;
+use Sokol\Application\Abstraction\AttendanceServiceInterface;
+use Sokol\Application\Abstraction\DashboardServiceInterface;
+use Sokol\Application\Abstraction\GameServiceInterface;
+use Sokol\Application\Abstraction\GameTypeServiceInterface;
+use Sokol\Application\Abstraction\ScheduleServiceInterface;
+use Sokol\Application\Abstraction\TrainingServiceInterface;
+use Sokol\Application\Abstraction\UserServiceInterface;
+use Sokol\Application\Abstraction\WeatherServiceInterface;
+use Sokol\Application\Implementation\AccountService;
+use Sokol\Application\Implementation\AttendanceService;
+use Sokol\Application\Implementation\DashboardService;
+use Sokol\Application\Implementation\GameService;
+use Sokol\Application\Implementation\GameTypeService;
+use Sokol\Application\Implementation\ScheduleService;
+use Sokol\Application\Implementation\TrainingService;
+use Sokol\Application\Implementation\UserService;
+use Sokol\Application\Implementation\WeatherService;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public $bindings = [
+        AccountServiceInterface::class    => AccountService::class,
+        AttendanceServiceInterface::class => AttendanceService::class,
+        DashboardServiceInterface::class  => DashboardService::class,
+        GameServiceInterface::class       => GameService::class,
+        GameTypeServiceInterface::class   => GameTypeService::class,
+        ScheduleServiceInterface::class   => ScheduleService::class,
+        TrainingServiceInterface::class   => TrainingService::class,
+        UserServiceInterface::class       => UserService::class,
+        WeatherServiceInterface::class    => WeatherService::class,
+    ];
+
     /**
      * Register any application services.
      */
     public function register(): void
     {
-        // Kontrakty (Domain) -> Eloquent implementace (Infrastructure)
-        $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
-        $this->app->bind(GameRepositoryInterface::class, GameRepository::class);
-        $this->app->bind(GameTypeRepositoryInterface::class, GameTypeRepository::class);
-        $this->app->bind(AttendanceRepositoryInterface::class, AttendanceRepository::class);
-        $this->app->bind(AttendanceStatusRepositoryInterface::class, AttendanceStatusRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-
         // Admin controllery dostanou přes DI logger zapisující do kanálu "admin" (storage/logs/admin-*.log)
         $this->app->when([
             Admin\TrainingController::class,
@@ -49,6 +63,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define('delete-user', [UserPolicy::class, 'delete']);
+
+        View::composer(
+            ['layouts.navigation', 'games.index', 'trainings.index', 'admin.users.index'],
+            CurrentUserComposer::class,
+        );
     }
 }

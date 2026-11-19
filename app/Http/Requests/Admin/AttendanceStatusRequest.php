@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Models\AttendanceStatus;
+use App\Rules\UniqueAttendanceStatusName;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class AttendanceStatusRequest extends FormRequest
 {
@@ -16,7 +15,14 @@ class AttendanceStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:50', Rule::unique(AttendanceStatus::class)->ignore($this->route('attendance_status'))],
+            'name' => ['required', 'string', 'max:50', new UniqueAttendanceStatusName($this->routeId('attendance_status'))],
         ];
+    }
+
+    private function routeId(string $parameter): ?int
+    {
+        $id = $this->route($parameter);
+
+        return $id === null ? null : (int) $id;
     }
 }

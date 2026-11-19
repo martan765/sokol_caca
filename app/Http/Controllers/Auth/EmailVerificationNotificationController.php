@@ -4,20 +4,26 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Sokol\Application\Abstraction\UserServiceInterface;
 
 class EmailVerificationNotificationController extends Controller
 {
+    public function __construct(
+        private readonly UserServiceInterface $users,
+    ) {}
+
     /**
      * Send a new email verification notification.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
+        $userId = $this->currentUserId();
+
+        if ($this->users->hasVerifiedEmail($userId)) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        $this->users->sendEmailVerification($userId);
 
         return back()->with('status', 'verification-link-sent');
     }

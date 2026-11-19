@@ -13,6 +13,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
+foreach (['training', 'game', 'user', 'game_type', 'attendance_status'] as $parameter) {
+    Route::pattern($parameter, '[0-9]+');
+}
+
 Route::get('/', function () {
     return view('welcome');
 });

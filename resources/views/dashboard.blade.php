@@ -1,3 +1,6 @@
+@use('App\View\Dates')
+@use('Sokol\Domain\Enums\AttendanceStatusId')
+
 @php
     // Docházka jako semafor – stejné barvy pro tréninky i zápasy
     $tier     = fn (int $pct) => $pct >= 75 ? 'good' : ($pct >= 50 ? 'mid' : 'low');
@@ -8,8 +11,10 @@
     $statKeys = ['trainings' => 'Tréninky', 'games' => 'Zápasy'];
 
     // Tabulky jsou proužkované (každý druhý řádek světle zelený), stav účasti ukazuje barevný levý okraj řádku
+    $attending    = AttendanceStatusId::Attending->value;
+    $absent       = AttendanceStatusId::NotAttending->value;
     $stripe       = fn (bool $even) => $even ? 'bg-brand-50' : 'bg-white';
-    $statusBorder = fn ($statusId) => $statusId == 1 ? 'border-l-green-500' : ($statusId == 2 ? 'border-l-red-400' : 'border-l-transparent');
+    $statusBorder = fn ($statusId) => $statusId == $attending ? 'border-l-green-500' : ($statusId == $absent ? 'border-l-red-400' : 'border-l-transparent');
 @endphp
 
 <x-app-layout>
@@ -28,15 +33,15 @@
 
             <!-- dashboard hráče -->
             @if(!$isAdmin)
-                @if($grouped->isEmpty())
+                @if(empty($dashboard->months))
                     <div class="text-center py-16 text-gray-400 italic bg-white rounded-xl border border-gray-200">
                         Zatím žádné akce k zobrazení.
                     </div>
                 @else
-                    @foreach($grouped as $month => $events)
+                    @foreach($dashboard->months as $monthView)
                         @php
-                            $stats     = $monthlyStats[$month];
-                            $monthName = \Carbon\Carbon::createFromFormat('Y-m', $month)->locale('cs')->translatedFormat('F Y');
+                            $stats     = $monthView->stats;
+                            $monthName = Dates::translated($monthView->monthStart, 'F Y');
                         @endphp
 
                         <div x-data="{ open: true }" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -46,13 +51,13 @@
                                 <div class="flex items-center flex-wrap gap-3">
                                     <span class="text-base font-bold text-white capitalize">{{ $monthName }}</span>
                                     @foreach($statKeys as $key => $label)
-                                        @if($stats[$key]['total'] > 0)
+                                        @if($stats[$key]->total > 0)
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold text-white bg-white/15 ring-1 ring-inset ring-white/25">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $dotCls[$tier($stats[$key]['percentage'])] }}"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $dotCls[$tier($stats[$key]->percentage)] }}"></span>
                                                 <span>{{ $label }}</span>
-                                                <span class="opacity-80">{{ $stats[$key]['attended'] }}/{{ $stats[$key]['total'] }}</span>
+                                                <span class="opacity-80">{{ $stats[$key]->attended }}/{{ $stats[$key]->total }}</span>
                                                 <span class="opacity-60">·</span>
-                                                <span>{{ $stats[$key]['percentage'] }}%</span>
+                                                <span>{{ $stats[$key]->percentage }}%</span>
                                             </span>
                                         @endif
                                     @endforeach
@@ -77,36 +82,36 @@
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-100">
-                                            @foreach($events->sortBy('date') as $event)
+                                            @foreach($monthView->events as $event)
                                                 <tr class="{{ $stripe($loop->even) }} hover:bg-brand-100/60 transition-colors">
-                                                    <td class="px-4 py-3 font-medium text-gray-800 whitespace-nowrap border-l-4 {{ $statusBorder($event['status_id']) }}">
-                                                        {{ $event['date']->locale('cs')->translatedFormat('D d.m.Y') }}
-                                                        @if($event['date']->format('H:i') !== '00:00')
-                                                            <span class="text-gray-500 text-xs ml-1">{{ $event['date']->format('H:i') }}</span>
+                                                    <td class="px-4 py-3 font-medium text-gray-800 whitespace-nowrap border-l-4 {{ $statusBorder($event->statusId) }}">
+                                                        {{ Dates::translated($event->date, 'D d.m.Y') }}
+                                                        @if($event->date->format('H:i') !== '00:00')
+                                                            <span class="text-gray-500 text-xs ml-1">{{ $event->date->format('H:i') }}</span>
                                                         @endif
                                                     </td>
                                                     <td class="px-4 py-3 whitespace-nowrap">
-                                                        <x-event-badge :type="$event['type']" />
+                                                        <x-event-badge :type="$event->type" />
                                                     </td>
                                                     <td class="px-4 py-3 text-gray-700">
-                                                        @if($event['type'] === 'game')
-                                                            <span class="font-medium">{{ $event['label'] }}</span>
-                                                            @if($event['location'])
-                                                                <span class="text-gray-400 text-xs ml-1">({{ $event['location'] }})</span>
+                                                        @if($event->isGame())
+                                                            <span class="font-medium">{{ $event->label }}</span>
+                                                            @if($event->location)
+                                                                <span class="text-gray-400 text-xs ml-1">({{ $event->location }})</span>
                                                             @endif
                                                         @else
-                                                            {{ $event['location'] ?? '—' }}
+                                                            {{ $event->location ?? '—' }}
                                                         @endif
                                                     </td>
                                                     <td class="px-4 py-3 whitespace-nowrap">
-                                                        @if($event['status_id'] == 1)
+                                                        @if($event->statusId == $attending)
                                                             <span class="inline-flex items-center gap-1 font-semibold text-green-700">
                                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                                 </svg>
                                                                 Byl
                                                             </span>
-                                                        @elseif($event['status_id'] == 2)
+                                                        @elseif($event->statusId == $absent)
                                                             <span class="inline-flex items-center gap-1 font-semibold text-red-600">
                                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -118,7 +123,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="px-4 py-3 text-gray-500 text-sm italic">
-                                                        {{ ($event['note'] ?? '') ?: '—' }}
+                                                        {{ ($event->note ?? '') ?: '—' }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -128,18 +133,18 @@
 
                                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
                                     @foreach($statKeys as $key => $label)
-                                        @if($stats[$key]['total'] > 0)
-                                            @php $t = $tier($stats[$key]['percentage']); @endphp
+                                        @if($stats[$key]->total > 0)
+                                            @php $t = $tier($stats[$key]->percentage); @endphp
                                             <div>
                                                 <div class="flex items-center justify-between mb-1.5">
                                                     <span class="text-gray-500">{{ $label }}</span>
                                                     <span class="font-bold text-gray-700">
-                                                        {{ $stats[$key]['attended'] }}/{{ $stats[$key]['total'] }}
-                                                        <span class="{{ $textCls[$t] }} ml-1">{{ $stats[$key]['percentage'] }}%</span>
+                                                        {{ $stats[$key]->attended }}/{{ $stats[$key]->total }}
+                                                        <span class="{{ $textCls[$t] }} ml-1">{{ $stats[$key]->percentage }}%</span>
                                                     </span>
                                                 </div>
                                                 <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
-                                                    <div class="h-full rounded-full {{ $barCls[$t] }}" style="width: {{ $stats[$key]['percentage'] }}%"></div>
+                                                    <div class="h-full rounded-full {{ $barCls[$t] }}" style="width: {{ $stats[$key]->percentage }}%"></div>
                                                 </div>
                                             </div>
                                         @endif
@@ -152,22 +157,21 @@
 
             <!-- dashboard admin -->
             @else
-                @if($months->isEmpty())
+                @if(empty($dashboard->months))
                     <div class="text-center py-16 text-gray-400 italic bg-white rounded-xl border border-gray-200">
                         Zatím žádné akce k zobrazení.
                     </div>
                 @else
-                    @foreach($months as $month)
+                    @foreach($dashboard->months as $monthView)
                         @php
-                            $monthName   = \Carbon\Carbon::createFromFormat('Y-m', $month)->locale('cs')->translatedFormat('F Y');
-                            $monthEvents = $eventsByMonth[$month];
+                            $monthName = Dates::translated($monthView->monthStart, 'F Y');
                         @endphp
 
                         <div class="mb-8">
                             <h3 class="flex items-center gap-2 text-base font-bold text-gray-700 mb-3 px-1 uppercase tracking-wider">
                                 <span class="w-1.5 h-5 rounded-full bg-brand-600"></span>
                                 {{ $monthName }}
-                                <span class="text-xs font-normal normal-case tracking-normal text-gray-400">({{ $monthEvents->count() }} {{ $monthEvents->count() < 5 ? 'akce' : 'akcí' }})</span>
+                                <span class="text-xs font-normal normal-case tracking-normal text-gray-400">({{ $monthView->eventCount }} {{ $monthView->eventCount < 5 ? 'akce' : 'akcí' }})</span>
                             </h3>
 
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -183,26 +187,26 @@
                                         </tr>
                                     </thead>
 
-                                    @foreach($players as $player)
-                                        @php $stats = $playerMonthlyStats[$player->id][$month]; @endphp
+                                    @foreach($monthView->players as $player)
+                                        @php $stats = $player->stats; @endphp
 
                                         <tbody x-data="{ open: false }">
                                             <tr class="border-b border-gray-100 {{ $stripe($loop->even) }} hover:bg-brand-100/60 transition-colors">
                                                 <td class="px-4 py-3 font-semibold text-gray-800">{{ $player->name }}</td>
                                                 @foreach(array_keys($statKeys) as $key)
                                                     <td class="px-4 py-3 text-center text-gray-600">
-                                                        @if($stats[$key]['total'] > 0)
-                                                            <span class="font-bold text-gray-800">{{ $stats[$key]['attended'] }}</span>
+                                                        @if($stats[$key]->total > 0)
+                                                            <span class="font-bold text-gray-800">{{ $stats[$key]->attended }}</span>
                                                             <span class="text-gray-400">/</span>
-                                                            <span>{{ $stats[$key]['total'] }}</span>
+                                                            <span>{{ $stats[$key]->total }}</span>
                                                         @else
                                                             <span class="text-gray-300">—</span>
                                                         @endif
                                                     </td>
                                                     <td class="px-4 py-3 text-center">
-                                                        @if($stats[$key]['total'] > 0)
-                                                            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold {{ $pillCls[$tier($stats[$key]['percentage'])] }}">
-                                                                {{ $stats[$key]['percentage'] }}%
+                                                        @if($stats[$key]->total > 0)
+                                                            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold {{ $pillCls[$tier($stats[$key]->percentage)] }}">
+                                                                {{ $stats[$key]->percentage }}%
                                                             </span>
                                                         @else
                                                             <span class="text-gray-300">—</span>
@@ -236,40 +240,37 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-gray-100">
-                                                                @foreach($monthEvents->sortBy('date') as $event)
+                                                                @foreach($player->events as $event)
                                                                     @php
-                                                                        $att      = $event['type'] === 'training'
-                                                                            ? $trainAtt->get($player->id)?->get($event['id'])
-                                                                            : $gameAtt->get($player->id)?->get($event['id']);
-                                                                        $statusId = $att?->status_id;
-                                                                        $note     = $att?->note;
+                                                                        $statusId = $event->statusId;
+                                                                        $note     = $event->note;
                                                                     @endphp
                                                                     <tr class="{{ $stripe($loop->even) }}">
                                                                         <td class="pl-8 pr-4 py-2 text-gray-700 whitespace-nowrap font-medium border-l-4 {{ $statusBorder($statusId) }}">
-                                                                            {{ $event['date']->locale('cs')->translatedFormat('D d.m.Y') }}
+                                                                            {{ Dates::translated($event->date, 'D d.m.Y') }}
                                                                         </td>
                                                                         <td class="px-4 py-2">
-                                                                            <x-event-badge :type="$event['type']" />
+                                                                            <x-event-badge :type="$event->type" />
                                                                         </td>
                                                                         <td class="px-4 py-2 text-gray-600">
-                                                                            @if($event['type'] === 'game')
-                                                                                {{ $event['label'] }}
-                                                                                @if($event['location'])
-                                                                                    <span class="text-gray-400">({{ $event['location'] }})</span>
+                                                                            @if($event->isGame())
+                                                                                {{ $event->label }}
+                                                                                @if($event->location)
+                                                                                    <span class="text-gray-400">({{ $event->location }})</span>
                                                                                 @endif
                                                                             @else
-                                                                                {{ $event['location'] ?? '—' }}
+                                                                                {{ $event->location ?? '—' }}
                                                                             @endif
                                                                         </td>
                                                                         <td class="px-4 py-2 whitespace-nowrap">
-                                                                            @if($statusId == 1)
+                                                                            @if($statusId == $attending)
                                                                                 <span class="inline-flex items-center gap-1 text-green-700 font-semibold">
                                                                                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                                                     </svg>
                                                                                     Byl
                                                                                 </span>
-                                                                            @elseif($statusId == 2)
+                                                                            @elseif($statusId == $absent)
                                                                                 <span class="inline-flex items-center gap-1 text-red-600 font-semibold">
                                                                                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                                                                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
